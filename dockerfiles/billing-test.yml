@@ -1,0 +1,21 @@
+version: "2"
+services:
+  mongo:
+    image: mongo
+    ports:
+      - '27018:27017'
+  billing:
+    build:
+      context: ..
+      dockerfile: ./dockerfiles/billing-develop.dockerfile
+    ports:
+      - '6383:6382'
+    working_dir: '/billing'
+    command: /usr/bin/env npm run start-test
+    environment:
+      NODE_ENV: 'test'
+    volumes:
+      - ../bin:/billing/bin
+      - ../lib:/billing/lib
+    links:
+      - mongo
