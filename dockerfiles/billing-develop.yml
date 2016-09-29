@@ -9,7 +9,7 @@ services:
       context: ..
       dockerfile: ./dockerfiles/billing-develop.dockerfile
     ports:
-      - '6382:6382'
+      - '3000:3000'
     working_dir: '/billing'
     command: /usr/bin/env npm run start-dev
     environment:
