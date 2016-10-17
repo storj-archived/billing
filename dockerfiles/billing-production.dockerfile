@@ -7,5 +7,5 @@ ADD . /billing
 
 RUN npm i
 
-#CMD npm run start-prod
-CMD sleep 600
+CMD npm run start-prod
+#CMD sleep 600
