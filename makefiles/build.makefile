@@ -14,9 +14,9 @@ shortdesc:
 	echo "build	- manages billing server's docker composition using 'develop' env" | fold -s
 
 longdesc:
-	echo 'Usage: `make down <composition> <env> [service]`' | fold -s
+	echo 'Usage: `make build <composition> <env> [service]`' | fold -s
 	echo ''
-	echo 'Run `docker-compose down` for given docker <compositions> and <service> (optional) using given <env>' | fold -s
+	echo 'Run `docker-compose bulid` for given docker <compositions> and <service> (optional) using given <env>' | fold -s
 	echo ''
 	echo 'Available compositions/envs/service
 
