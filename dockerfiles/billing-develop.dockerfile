@@ -1,4 +1,4 @@
-FROM node:4.5
+FROM devops-base
 
 RUN mkdir /billing
 WORKDIR /billing
@@ -15,3 +15,6 @@ ADD ./package.json /billing/package.json
 
 RUN npm i -g nodemon
 RUN npm i
+
+RUN thor build:repo billing
+
