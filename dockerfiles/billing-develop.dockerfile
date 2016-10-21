@@ -1,4 +1,4 @@
-FROM devops:thor
+FROM bryanchriswhite/devops:thor
 
 RUN mkdir /billing
 WORKDIR /billing
@@ -15,9 +15,3 @@ ADD ./package.json /billing/package.json
 
 RUN npm i -g nodemon
 RUN npm i
-
-WORKDIR /storj-base
-RUN thor setup:clone /billing
-
-WORKDIR /billing
-
