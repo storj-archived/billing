@@ -1,0 +1,14 @@
+version: "2"
+services:
+  billing:
+    image: storjlabs/billing
+    build:
+      context: ../../
+      dockerfile: ./dockerfiles/billing-development.dockerfile
+    volumes:
+      - ../lib:/billing/lib
+      - ../bin:/billing/bin
+      - ../index.js:/billing/index.js
+      - ../package.json:/billing/package.json
+    environment:
+      STAGE: development
