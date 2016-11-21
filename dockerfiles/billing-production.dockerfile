@@ -1,14 +1,10 @@
-FROM storjlabs/storj:thor
+FROM storjlabs/node-storj:latest
 
 RUN mkdir /billing
-WORKDIR /billing
+RUN ln -s /storj-base/node_modules/ /billing/node_modules
 
-ADD . /billing
-
-RUN npm i
-
-WORKDIR /storj-base
-RUN thor setup:clone /billing
+RUN npm i -g nodemon
+RUN npm install
 
 WORKDIR /billing
 
