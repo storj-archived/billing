@@ -3,7 +3,7 @@ services:
   billing:
     image: storjlabs/billing
     build:
-      context: ../../
+      context: ../
       dockerfile: ./dockerfiles/billing-development.dockerfile
     volumes:
       - ../lib:/billing/lib
