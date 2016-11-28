@@ -12,7 +12,7 @@ COPY ./bin /billing/bin
 COPY ./lib /billing/lib
 COPY ./index.js /billing/index.js
 
-RUN yarn install
+RUN yarn install --ignore-engines
 
 WORKDIR /billing
 
