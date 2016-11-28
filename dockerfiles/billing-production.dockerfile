@@ -1,6 +1,8 @@
 FROM storjlabs/node-storj:billing-latest
 
-ENV THOR_ENV production
+# TODO: use `production` but first we have to fix packages `engines` to be all compatible with 6.x
+#ENV THOR_ENV production
+ENV THOR_ENV development
 
 RUN mkdir /billing
 RUN ln -s /storj-base/node_modules/ /billing/node_modules
