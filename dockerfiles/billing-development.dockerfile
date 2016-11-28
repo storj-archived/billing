@@ -6,7 +6,7 @@ RUN mkdir /billing
 RUN ln -s /storj-base/node_modules/ /billing/node_modules
 
 RUN npm i -g nodemon
-RUN yarn install
+RUN yarn install --ignore-engines
 
 WORKDIR /billing
 
