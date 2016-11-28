@@ -1,4 +1,4 @@
-FROM storjlabs/node-storj:latest
+FROM storjlabs/node-storj:billing-latest
 
 ENV THOR_ENV production
 
