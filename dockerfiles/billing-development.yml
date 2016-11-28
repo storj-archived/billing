@@ -14,8 +14,9 @@ services:
       STAGE: development
       MONGO_URL: 'mongodb://mongo:27017/__storj-bridge-development'
     links:
-     - mongo
-     ports: '3000:3000'
+      - mongo
+    ports:
+      - '3000:3000'
   mongo:
     image: mongo
     ports:
