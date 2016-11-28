@@ -10,8 +10,7 @@ COPY ./bin /billing/bin
 COPY ./lib /billing/lib
 COPY ./index.js /billing/index.js
 
-RUN npm i -g nodemon
-RUN npm install
+RUN yarn install
 
 WORKDIR /billing
 
