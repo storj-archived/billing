@@ -11,7 +11,7 @@ if [ "$1" == "bash:container" ]; then
   exit 1
 fi
 
-if [ "$1" == "bash:container" ]; then
+if [ "$1" == "bash:host" ]; then
   ARGS="host /bin/bash"
 fi
 
