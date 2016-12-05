@@ -1,0 +1,6 @@
+[submodule "core"]
+	path = core
+	url = git@github.com:Storj/core.git
+[submodule "service-storage-models"]
+	path = service-storage-models
+	url = git@github.com:Storj/service-storage-models.git
