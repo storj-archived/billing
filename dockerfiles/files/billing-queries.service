@@ -1,0 +1,6 @@
+[Unit]
+Description=Billing queries update script
+
+[Service]
+Type=simple
+ExecStart=/root/bin/billing-queries.js
