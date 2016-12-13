@@ -6,7 +6,8 @@
   "scripts": {
   },
   "dependencies": {
-    "storj-service-storage-models": "bryanchriswhite/service-storage-models#billing-models"
+    "storj-service-storage-models": "bryanchriswhite/service-storage-models#billing-models",
+    "cron": "^1.1.1"
   },
   "engines": {
     "node": "^6.9.1"

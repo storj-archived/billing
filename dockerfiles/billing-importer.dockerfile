@@ -1,12 +1,10 @@
 FROM node:6
 
-# CONTEXT IS `./dockerfiles/files` DIR
-COPY ./billing-queries.service /lib/systemd/system/billing-queries.service
-COPY ./billing-queries.timer /lib/systemd/system/billing-queries.timer
-COPY ./billing-queries.package.json /root/package.json
+COPY ./dockerfiles/files/billing-queries.package.json /root/package.json
+COPY ./bin /root/bin/
 
-WORKDIR /root
+WORKDIR /root/bin
 
 RUN npm install
 
-CMD systemctl start billing-queries.timer
+CMD node /root/bin/billing-queries.js
