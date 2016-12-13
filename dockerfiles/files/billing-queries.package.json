@@ -1,0 +1,14 @@
+{
+  "name": "storj-billing-importer",
+  "version": "0.0.1",
+  "private": true,
+  "license": "AGPL-3.0",
+  "scripts": {
+  },
+  "dependencies": {
+    "storj-service-storage-models": "bryanchriswhite/service-storage-models#billing-models"
+  },
+  "engines": {
+    "node": "^6.9.1"
+  }
+}
