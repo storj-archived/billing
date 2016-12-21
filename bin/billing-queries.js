@@ -4,6 +4,8 @@ console.log('HELLO FROM BILLING-QUERIES!');
 
 const moment = require('moment');
 const Storage = require('storj-service-storage-models');
+const CENTS_PER_GB_BANDWIDTH = 5;
+const CENTS_PER_GB_STORAGE = .002054795;
 
 const mongoOptions = JSON.parse(process.env.MONGO_OPTIONS || {});
 mongoOptions.auth = {
@@ -38,7 +40,9 @@ storage.connectedPromise
               .then(() => console.log('... forStorage done!'));
 
           Promise.all([bandwidthDebitsPromise, storageDebitsPromise])
-              .then(() => process.exit(0));
+              .then(() => console.log(
+                  `IMPORT COMPLETE: ${moment.utc(beginTimestamp).format('YYYY-MM-DD HH:MM:SS')} - ${moment.utc(beginTimestamp).format('YYYY-MM-DD HH:MM:SS')}`
+              ));
         },
         start: false,
         timeZone: 'UTC'
@@ -46,6 +50,7 @@ storage.connectedPromise
       job.start();
     })
     .catch(function(err) {
+      console.error('ERROR: ');
       console.error(err);
-      process.exit(1);
+      // process.exit(1);
     });
