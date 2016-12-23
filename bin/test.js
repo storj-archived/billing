@@ -7,7 +7,7 @@ const Storage = require('storj-service-storage-models');
 const CENTS_PER_GB_BANDWIDTH = 5;
 const CENTS_PER_GB_STORAGE = .002054795;
 
-const mongoOptions = JSON.parse(process.env.MONGO_OPTIONS || {});
+const mongoOptions = JSON.parse(process.env.MONGO_OPTIONS || '{}');
 mongoOptions.auth = {
   user: process.env.MONGO_USERNAME || '',
   pass: process.env.MONGO_PASSWORD || ''
