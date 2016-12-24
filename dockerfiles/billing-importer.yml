@@ -1,0 +1,22 @@
+version: '2'
+services:
+  mongo:
+    image: mongo
+    ports:
+      - '27017:27017'
+  billing-importer:
+    image: storjlabs/billing-importer:local
+    links:
+      - mongo
+      - billing
+    environment: 
+      MONGO_URL: 'mongodb://mongo/__storj-bridge-development'
+    command: sleep 9999999
+  billing:
+    image: storjlabs/billing:manual-build-2
+    links: 
+      - mongo
+    environment: 
+      MONGO_URL: 'mongodb://mongo/__storj-bridge-development'
+    ports: 
+      - '3000:3000'
