@@ -3,20 +3,26 @@ services:
   mongo:
     image: mongo
     ports:
-      - '27017:27017'
+      - 27017:27017
   billing-importer:
-    image: storjlabs/billing-importer:local
+    image: storjlabs/billing-importer
+    volumes:
+      - '../lib/queries/:/root/lib/queries'
+    environment:
+      MONGO_URL: 'mongodb://mongo/bridge'
+      BILLING_URL: 'http://billing:3000/debits'
     links:
       - mongo
       - billing
-    environment: 
-      MONGO_URL: 'mongodb://mongo/__storj-bridge-development'
-    command: sleep 9999999
   billing:
-    image: storjlabs/billing:manual-build-2
-    links: 
+    image: storjlabs/billing
+    privileged: true
+    volumes:
+      - '../:/root/node_modules/storj-billing/'
+      - '../../service-storage-models/:/root/node_modules/storj-service-storage-models/'
+    environment:
+      MONGO_URL: 'mongodb://mongo/bridge'
+    links:
       - mongo
-    environment: 
-      MONGO_URL: 'mongodb://mongo/__storj-bridge-development'
-    ports: 
-      - '3000:3000'
+    ports:
+      - 3000:3000
