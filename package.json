@@ -59,6 +59,7 @@
   "dependencies": {
     "async": "^1.5.2",
     "cors": "^2.7.1",
+    "cron": "^1.1.1",
     "csv-write-stream": "^2.0.0",
     "elliptic": "^6.0.2",
     "express": "^4.13.3",
