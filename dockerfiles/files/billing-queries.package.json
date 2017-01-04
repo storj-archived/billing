@@ -7,7 +7,8 @@
   },
   "dependencies": {
     "storj-service-storage-models": "bryanchriswhite/service-storage-models#billing-models",
-    "cron": "^1.1.1"
+    "cron": "^1.1.1",
+    "axios": "^0.15.3"
   },
   "engines": {
     "node": "^6.9.1"
