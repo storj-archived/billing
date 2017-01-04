@@ -52,4 +52,23 @@ After every `npm link XXX` you should see something like this:
 
 ### 4. Create `.env` file
 
-Create a `.env` file in the root of the project
+Create a `.env` file in the root of the project. Add necessary environment variables.
+
+### 5. Run `nodemon bin/storj/billing.js`
+
+See something like this:
+
+```sh
+barbara in ~/Documents/Code/billing on master*
+🦄  nodemon bin/storj-billing.js
+[nodemon] 1.11.0
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching: *.*
+[nodemon] starting `node bin/storj-billing.js`
+**** server listening on  3000
+{"level":"info","message":"starting the billing engine","timestamp":"2017-01-04T00:45:03.388Z"}
+{"level":"info","message":"opening database connection to mongodb://127.0.0.1:27017/__storj-bridge-development","timestamp":"2017-01-04T00:45:03.389Z"}
+{"level":"info","message":"configuring service endpoints","timestamp":"2017-01-04T00:45:03.414Z"}
+{"level":"info","message":"setting up http(s) server instance","timestamp":"2017-01-04T00:45:03.655Z"}
+{"level":"info","message":"connected to database","timestamp":"2017-01-04T00:45:03.676Z"}
+```
