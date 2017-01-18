@@ -7,16 +7,25 @@ const Storage = require('storj-service-storage-models');
 const CENTS_PER_GB_BANDWIDTH = 5;
 const CENTS_PER_GB_STORAGE = .002054795;
 
-const mongoOptions = JSON.parse(process.env.MONGO_OPTIONS || '{}');
-mongoOptions.auth = {
-  user: process.env.MONGO_USERNAME || '',
-  pass: process.env.MONGO_PASSWORD || ''
+const MONGO_USERNAME = process.env.MONGO_USERNAME.match(/\S+/)[0];
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD.match(/\S+/)[0];
+const MONGOS = JSON.parse(process.env.MONGOS || '{}');
+const MONGO_SSL = JSON.parse(process.env.MONGO_SSL || 'false');
+const mongoOptions = {
+  user: MONGO_USERNAME,
+  pass: MONGO_PASSWORD,
+  mongos: MONGOS,
+  ssl: MONGO_SSL
 };
 
 const storage = new Storage(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/__storj-billing-development', mongoOptions);
 const generateDebits = require('../lib/queries/generate-debits')(storage);
+const connectedPromise = new Promise((resolve, reject) => {
+  storage.connection.on('connected', resolve);
+  storage.connection.on('error', reject);
+});
 
-storage.connectedPromise
+connectedPromise
     .then(function() {
       const CronJob = require('cron').CronJob;
       const job = new CronJob({
