@@ -18,14 +18,20 @@ const mongoOptions = {
   ssl: MONGO_SSL
 };
 
-const storage = new Storage(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/__storj-billing-development', mongoOptions);
-module.exports = storage;
+const BILLING_URL = process.env.BILLING_URL || uri || 'localhost:3000';
+const PRIVKEY = process.env.PRIVKEY ||
+    // NB: default (test) key
+    'd6b0e5ac88be1f9c3749548de7b6148f14c2ca8ccdf5295369476567e8c8d218';
 
-const generateDebits = require('../lib/queries/generate-debits')(storage);
+const billingClient = new BillingClient(BILLING_URL, PRIVKEY);
+const storage = new Storage(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/__storj-billing-development', mongoOptions);
+const generateDebits = require('../lib/queries/generate-debits')(storage, billingClient);
 const connectedPromise = new Promise((resolve, reject) => {
   storage.connection.on('connected', resolve);
   storage.connection.on('error', reject);
 });
+
+module.exports = storage;
 
 connectedPromise
     .then(countDebits)
