@@ -7,8 +7,8 @@ const Storage = require('storj-service-storage-models');
 const CENTS_PER_GB_BANDWIDTH = 5;
 const CENTS_PER_GB_STORAGE = .002054795;
 
-const MONGO_USERNAME = process.env.MONGO_USERNAME.match(/\S+/)[0];
-const MONGO_PASSWORD = process.env.MONGO_PASSWORD.match(/\S+/)[0];
+const MONGO_USERNAME = process.env.MONGO_USERNAME && process.env.MONGO_USERNAME.match(/\S+/)[0];
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD && process.env.MONGO_PASSWORD.match(/\S+/)[0];
 const MONGOS = JSON.parse(process.env.MONGOS || '{}');
 const MONGO_SSL = JSON.parse(process.env.MONGO_SSL || 'false');
 const mongoOptions = {
@@ -18,7 +18,7 @@ const mongoOptions = {
   ssl: MONGO_SSL
 };
 
-const BILLING_URL = process.env.BILLING_URL || uri || 'localhost:3000';
+const BILLING_URL = process.env.BILLING_URL || 'localhost:3000';
 const PRIVKEY = process.env.PRIVKEY ||
     // NB: default (test) key
     'd6b0e5ac88be1f9c3749548de7b6148f14c2ca8ccdf5295369476567e8c8d218';
