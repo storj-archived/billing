@@ -1,4 +1,7 @@
 node_modules
+*.swp
+*.swo
+*.swn
 .idea/
 TODO.md
 .env
