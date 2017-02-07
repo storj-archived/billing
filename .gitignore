@@ -4,3 +4,4 @@ node_modules
 *.swn
 .idea/
 TODO.md
+.env
