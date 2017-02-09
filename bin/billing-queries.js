@@ -4,19 +4,35 @@ console.log('HELLO FROM BILLING-QUERIES!');
 
 const moment = require('moment');
 const Storage = require('storj-service-storage-models');
+const BillingClient = require('../utils/billing-client');
 const CENTS_PER_GB_BANDWIDTH = 5;
 const CENTS_PER_GB_STORAGE = .002054795;
 
-const mongoOptions = JSON.parse(process.env.MONGO_OPTIONS || '{}');
-mongoOptions.auth = {
-  user: process.env.MONGO_USERNAME || '',
-  pass: process.env.MONGO_PASSWORD || ''
+const MONGO_USERNAME = process.env.MONGO_USERNAME && process.env.MONGO_USERNAME.match(/\S+/)[0];
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD && process.env.MONGO_PASSWORD.match(/\S+/)[0];
+const MONGOS = JSON.parse(process.env.MONGOS || '{}');
+const MONGO_SSL = JSON.parse(process.env.MONGO_SSL || 'false');
+const mongoOptions = {
+  user: MONGO_USERNAME,
+  pass: MONGO_PASSWORD,
+  mongos: MONGOS,
+  ssl: MONGO_SSL
 };
 
-const storage = new Storage(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/__storj-billing-development', mongoOptions);
-const generateDebits = require('../lib/queries/generate-debits')(storage);
+const BILLING_URL = process.env.BILLING_URL || uri || 'localhost:3000';
+const PRIVKEY = process.env.PRIVKEY ||
+    // NB: default (test) key
+    'd6b0e5ac88be1f9c3749548de7b6148f14c2ca8ccdf5295369476567e8c8d218';
 
-storage.connectedPromise
+const billingClient = new BillingClient(BILLING_URL, PRIVKEY);
+const storage = new Storage(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/__storj-billing-development', mongoOptions);
+const generateDebits = require('../lib/queries/generate-debits')(storage, billingClient);
+const connectedPromise = new Promise((resolve, reject) => {
+  storage.connection.on('connected', resolve);
+  storage.connection.on('error', reject);
+});
+
+connectedPromise
     .then(function() {
       const CronJob = require('cron').CronJob;
       const job = new CronJob({

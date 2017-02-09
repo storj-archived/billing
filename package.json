@@ -77,11 +77,11 @@
     "nodemailer": "^2.0.0",
     "readable-stream": "^2.0.5",
     "storj-lib": "^6.0.0",
-    "storj-mongodb-adapter": "^6.0.0",
+    "storj-mongodb-adapter": "^7.0.0",
     "storj-service-error-types": "^1.0.0",
     "storj-service-mailer": "^1.0.0",
     "storj-service-middleware": "^1.0.0",
-    "storj-service-storage-models": "^7.0.1",
+    "storj-service-storage-models": "^8.0.0",
     "stripe": "^4.11.0",
     "through": "^2.3.8"
   }
