@@ -55,8 +55,10 @@ connectedPromise
           const storageDebitsPromise = generateDebits
               .forStorage(beginTimestamp, endTimestamp, CENTS_PER_GB_STORAGE)
               .then(() => console.log('... forStorage done!'));
+          const referralCreditsPromise = generateReferralCredits()
+              .then(() => console.log('... referral credits done!'));
 
-          Promise.all([bandwidthDebitsPromise, storageDebitsPromise])
+          Promise.all([bandwidthDebitsPromise, storageDebitsPromise, referralCreditsPromise])
               .then(() => console.log(
                   `IMPORT COMPLETE: ${moment.utc(beginTimestamp).format('YYYY-MM-DD HH:MM:SS')} - ${moment.utc(beginTimestamp).format('YYYY-MM-DD HH:MM:SS')}`
               ));
