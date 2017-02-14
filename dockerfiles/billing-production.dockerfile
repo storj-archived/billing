@@ -13,6 +13,7 @@ COPY ./index.js /billing/index.js
 
 WORKDIR /billing
 
-RUN npm i --production
+RUN npm i -g yarn
+RUN yarn --ignore-engines
 
 CMD npm run start-prod
