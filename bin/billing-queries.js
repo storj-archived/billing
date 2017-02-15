@@ -4,7 +4,7 @@ console.log('HELLO FROM BILLING-QUERIES!');
 
 const moment = require('moment');
 const Storage = require('storj-service-storage-models');
-const BillingClient = require('../../utils/billing-client');
+const BillingClient = require('../lib/utils/billing-client');
 const CENTS_PER_GB_BANDWIDTH = 5;
 const CENTS_PER_GB_STORAGE = .002054795;
 
