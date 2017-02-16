@@ -4,13 +4,13 @@ console.log('HELLO FROM BILLING-QUERIES!');
 
 const moment = require('moment');
 const Storage = require('storj-service-storage-models');
-const BillingClient = require('../utils/billing-client');
+const BillingClient = require('../lib/utils/billing-client');
 const CENTS_PER_GB_BANDWIDTH = 5;
 const CENTS_PER_GB_STORAGE = .002054795;
 
 const MONGO_USERNAME = process.env.MONGO_USERNAME && process.env.MONGO_USERNAME.match(/\S+/)[0];
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD && process.env.MONGO_PASSWORD.match(/\S+/)[0];
-const MONGOS = JSON.parse(process.env.MONGOS || '{}');
+const MONGOS = JSON.parse(process.env.MONGOS || 'false');
 const MONGO_SSL = JSON.parse(process.env.MONGO_SSL || 'false');
 const mongoOptions = {
   user: MONGO_USERNAME,
@@ -19,9 +19,11 @@ const mongoOptions = {
   ssl: MONGO_SSL
 };
 
-const BILLING_URL = process.env.BILLING_URL || uri || 'localhost:3000';
+const BILLING_URL = process.env.BILLING_URL || 'localhost:3000';
+
+// NB: default (test) key
+// matching pubkey: '02439658e54579d120b0fd24d323e413d028704f845b8f7ab5b11e91d6cd5dbb00';
 const PRIVKEY = process.env.PRIVKEY ||
-    // NB: default (test) key
     'd6b0e5ac88be1f9c3749548de7b6148f14c2ca8ccdf5295369476567e8c8d218';
 
 const billingClient = new BillingClient(BILLING_URL, PRIVKEY);
@@ -48,7 +50,7 @@ connectedPromise
           const beginTimestamp = moment.utc(endTimestamp).subtract(1, 'day').valueOf();
           console.log(`timestamp range: ${beginTimestamp}-${endTimestamp}`);
 
-          console.log('starting...');
+          // console.log('starting...');
           const bandwidthDebitsPromise = generateDebits
               .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH)
               .then(() => console.log('... forBandwidth done!'));

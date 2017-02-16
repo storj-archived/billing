@@ -20,9 +20,11 @@ const mongoOptions = {
 };
 
 const BILLING_URL = process.env.BILLING_URL || 'http://localhost:3000';
+
+// NB: default (test) key
+// matching pubkey: '02439658e54579d120b0fd24d323e413d028704f845b8f7ab5b11e91d6cd5dbb00';
 const PRIVKEY = process.env.PRIVKEY ||
-    // NB: default (test) key
-    'd6b0e5ac88be1f9c3749548de7b6148f14c2ca8ccdf5295369476567e8c8d218';
+  'd6b0e5ac88be1f9c3749548de7b6148f14c2ca8ccdf5295369476567e8c8d218';
 
 const billingClient = new BillingClient(BILLING_URL, PRIVKEY);
 const storage = new Storage(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/bridge', mongoOptions);
@@ -35,47 +37,55 @@ const connectedPromise = new Promise((resolve, reject) => {
 module.exports = storage;
 
 connectedPromise
-    .then(countDebits)
-    .then(deleteDebits)
-    .then(function() {
-      console.log('connected!');
-      const now = moment().utc();
-      const bandwidthDebitsPromises = [];
-      const storageDebitsPromises = [];
+  .then(countDebits)
+  .then(deleteDebits)
+  .then(function() {
+    console.log('connected!');
+    // const bandwidthDebitsPromises = [];
+    // const storageDebitsPromises = [];
 
-      countDebits().then(function() {
-        for (let i = 0; i < 30; i++) {
+    countDebits().then(function() {
+      let promiseChain = Promise.resolve();
+
+      for (let i = 0; i < 30; i++) {
+        promiseChain = promiseChain.then(() => {
           const endTimestamp = moment.utc().subtract(2, 'month').add(i, 'day').valueOf();
           const beginTimestamp = moment.utc(endTimestamp).subtract(1, 'day').valueOf();
           const timestampRange = `timestamp range: ${moment.utc(beginTimestamp)
-              .format('MM-DD-YYYY')}-${moment.utc(endTimestamp)
-              .format('MM-DD-YYYY')}`;
+            .format('MM-DD-YYYY')}-${moment.utc(endTimestamp)
+            .format('MM-DD-YYYY')}`;
           console.log(timestampRange);
 
-          console.log('starting...');
-          bandwidthDebitsPromises.push(generateDebits
-              .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH)
-              .then(() => console.log(`... ${timestampRange} forBandwidth done!`)));
-          storageDebitsPromises.push(generateDebits
-              .forStorage(beginTimestamp, endTimestamp, CENTS_PER_GB_STORAGE)
-              .then(() => console.log(`... ${timestampRange} forStorage done!`)));
-        }
-        Promise.all(bandwidthDebitsPromises.concat(storageDebitsPromises))
-            .then(countDebits)
-            .then(() => process.exit(0));
-      })
+          // console.log('starting...');
+          // bandwidthDebitsPromises.push(generateDebits
+          const bandwidthDebitPromise = generateDebits
+            .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH); //);
+          // .then(() => console.log(`... ${timestampRange} forBandwidth done!`)));
+          // storageDebitsPromises.push(generateDebits
+          const storageDebitPromise = generateDebits
+            .forStorage(beginTimestamp, endTimestamp, CENTS_PER_GB_STORAGE); //);
+          // .then(() => console.log(`... ${timestampRange} forStorage done!`)));
+
+          return Promise.all([bandwidthDebitPromise, storageDebitPromise]);
+        })
+      }
+      // Promise.all(bandwidthDebitsPromises.concat(storageDebitsPromises))
+      promiseChain
+        .then(countDebits)
+        .then(() => process.exit(0));
     })
-    .catch(function(err) {
-      // throw new Error(err);
-      countDebits(() => {
-        console.error(err);
-        process.exit(1);
-      })
-    });
+  })
+  .catch(function(err) {
+    // throw new Error(err);
+    countDebits(() => {
+      console.error(err);
+      process.exit(1);
+    })
+  });
 
 function countDebits() {
   return storage.models.Debit.count()
-      .then(count => console.log(count));
+    .then(count => console.log(count));
 }
 
 function deleteDebits() {
