@@ -1,6 +1,6 @@
 {
   "name": "storj-billing",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The billing and subscription system that powers Storj.io.",
   "main": "index.js",
   "directories": {
@@ -81,7 +81,7 @@
     "storj-service-error-types": "^1.0.0",
     "storj-service-mailer": "^1.0.0",
     "storj-service-middleware": "^1.0.0",
-    "storj-service-storage-models": "^8.0.0",
+    "storj-service-storage-models": "^8.2.0",
     "stripe": "^4.11.0",
     "through": "^2.3.8"
   }
