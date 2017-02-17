@@ -29,6 +29,7 @@ const PRIVKEY = process.env.PRIVKEY ||
 const billingClient = new BillingClient(BILLING_URL, PRIVKEY);
 const storage = new Storage(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/__storj-billing-development', mongoOptions);
 const generateDebits = require('../lib/queries/generate-debits')(storage, billingClient);
+const generateReferralCredits = require('../lib/queries/generate-referral-credits')(storage, billingClient);
 const connectedPromise = new Promise((resolve, reject) => {
   storage.connection.on('connected', resolve);
   storage.connection.on('error', reject);
@@ -56,8 +57,10 @@ connectedPromise
           const storageDebitsPromise = generateDebits
               .forStorage(beginTimestamp, endTimestamp, CENTS_PER_GB_STORAGE)
               .then(() => console.log('... forStorage done!'));
+          const referralCreditsPromise = generateReferralCredits()
+              .then(() => console.log('... referral credits done!'));
 
-          Promise.all([bandwidthDebitsPromise, storageDebitsPromise])
+          Promise.all([bandwidthDebitsPromise, storageDebitsPromise, referralCreditsPromise])
               .then(() => console.log(
                   `IMPORT COMPLETE: ${moment.utc(beginTimestamp).format('YYYY-MM-DD HH:MM:SS')} - ${moment.utc(beginTimestamp).format('YYYY-MM-DD HH:MM:SS')}`
               ));
