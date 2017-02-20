@@ -232,7 +232,7 @@ bluebird@^2.10.2, bluebird@^2.9.34:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-2.11.0.tgz#534b9033c022c9579c56ba3b3e5a5caafbb650e1"
 
-bluebird@~3.4.6:
+bluebird@^3.4.7, bluebird@~3.4.6:
   version "3.4.7"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.4.7.tgz#f72d760be09b7f76d08ed8fae98b289a8d05fab3"
 
@@ -1195,7 +1195,7 @@ ip@^1.1.2:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/ip/-/ip-1.1.4.tgz#de8247ffef940451832550fba284945e6e039bfb"
 
-"ip@github:littleskunk/node-ip#b1e7ec0cbff9f7841b1584e50339a774363437c0":
+ip@littleskunk/node-ip#b1e7ec0cbff9f7841b1584e50339a774363437c0:
   version "1.1.4"
   resolved "https://codeload.github.com/littleskunk/node-ip/tar.gz/b1e7ec0cbff9f7841b1584e50339a774363437c0"
 
@@ -1322,7 +1322,7 @@ jsdoc@^3.4.0:
     taffydb "2.6.2"
     underscore "~1.8.3"
 
-"jsen@github:bugventure/jsen#9e57a9d653ff4ea47d364fc37da0f1659bfb8e89":
+jsen@bugventure/jsen#9e57a9d653ff4ea47d364fc37da0f1659bfb8e89:
   version "0.6.4"
   resolved "https://codeload.github.com/bugventure/jsen/tar.gz/9e57a9d653ff4ea47d364fc37da0f1659bfb8e89"
 
@@ -1532,11 +1532,11 @@ lodash.isplainobject@^4.0.6:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz#7c526a52d89b45c45cc690b88163be0497f550cb"
 
-lodash@3.7.x, lodash@^3.6.0:
+lodash@3.7.x:
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.7.0.tgz#3678bd8ab995057c07ade836ed2ef087da811d45"
 
-lodash@=3.10.1:
+lodash@=3.10.1, lodash@^3.6.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
@@ -1633,15 +1633,15 @@ minimatch@0.3:
     lru-cache "2"
     sigmund "~1.0.0"
 
-"minimatch@2 || 3", minimatch@^3.0.2:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.0.3.tgz#2a4e4090b96b2db06a9d7df01055a62a77c9b774"
+"minimatch@2 || 3", minimatch@2.0.x:
+  version "2.0.10"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-2.0.10.tgz#8d087c39c6b38c001b97fca7ce6d0e1e80afbac7"
   dependencies:
     brace-expansion "^1.0.0"
 
-minimatch@2.0.x:
-  version "2.0.10"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-2.0.10.tgz#8d087c39c6b38c001b97fca7ce6d0e1e80afbac7"
+minimatch@^3.0.2:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.0.3.tgz#2a4e4090b96b2db06a9d7df01055a62a77c9b774"
   dependencies:
     brace-expansion "^1.0.0"
 
@@ -1692,7 +1692,7 @@ moment-timezone@^0.5.x:
   dependencies:
     moment ">= 2.6.0"
 
-"moment@>= 2.6.0", moment@^2.10.6, moment@^2.13.0, moment@^2.15.1:
+"moment@>= 2.6.0", moment@^2.10.6, moment@^2.13.0, moment@^2.15.1, moment@^2.17.1:
   version "2.17.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.17.1.tgz#fed9506063f36b10f066c8b59a144d7faebe1d82"
 
@@ -1913,7 +1913,7 @@ npmlog@^4.0.1:
     gauge "~2.7.1"
     set-blocking "~2.0.0"
 
-"ntp-client@github:bookchin/node-ntp-client#v0.5.5":
+ntp-client@bookchin/node-ntp-client#v0.5.5:
   version "0.5.5"
   resolved "https://codeload.github.com/bookchin/node-ntp-client/tar.gz/64a1d2318284578b90f388565de7c4b5a2441233"
 
@@ -2090,6 +2090,13 @@ qs@^2.4.2:
 qs@^6.2.1, qs@~6.3.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.3.0.tgz#f403b264f23bc01228c74131b407f18d5ea5d442"
+
+random-word@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/random-word/-/random-word-2.0.0.tgz#25ed18d5ba5a99409eaceb59dabe65b76d2ff6e9"
+  dependencies:
+    unique-random-array "^1.0.0"
+    word-list "^2.0.0"
 
 range-parser@~1.2.0:
   version "1.2.0"
@@ -2504,7 +2511,7 @@ sshpk@^1.7.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.3.1.tgz#faf51b9eb74aaef3b3acf4ad5f61abf24cb7b93e"
 
-storj-lib@^6.0.0, storj-lib@^6.0.12:
+storj-lib@^6.0.0, storj-lib@^6.0.12, storj-lib@^6.1.2:
   version "6.1.2"
   resolved "https://registry.yarnpkg.com/storj-lib/-/storj-lib-6.1.2.tgz#aafe0e552bfd504b63517e3d2ff9a1139d7d5d2d"
   dependencies:
@@ -2551,7 +2558,7 @@ storj-mongodb-adapter@^7.0.0:
     storj-lib "^6.0.0"
     storj-service-storage-models "^8.0.0"
 
-storj-service-error-types@^1.0.0:
+storj-service-error-types@^1.0.0, storj-service-error-types@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/storj-service-error-types/-/storj-service-error-types-1.1.0.tgz#d25d72f2178d0a8d588783a6131db28c95f14a59"
 
@@ -2588,6 +2595,26 @@ storj-service-storage-models@^8.0.0:
     ms "^0.7.1"
     storj-lib "^6.0.12"
     storj-service-error-types "^1.0.0"
+    stripe "^4.11.0"
+
+storj-service-storage-models@^8.2.0:
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/storj-service-storage-models/-/storj-service-storage-models-8.4.0.tgz#495993f0ecf9ef87af0125a1d22ba247777bcb51"
+  dependencies:
+    bluebird "^3.4.7"
+    dotenv "^2.0.0"
+    elliptic "^6.3.2"
+    hat "0.0.3"
+    merge "^1.2.0"
+    mime-db "^1.24.0"
+    moment "^2.17.1"
+    mongoose "^4.6.7"
+    mongoose-int32 "^0.1.0"
+    mongoose-types "^1.0.3"
+    ms "^0.7.1"
+    random-word "^2.0.0"
+    storj-lib "^6.1.2"
+    storj-service-error-types "^1.1.0"
     stripe "^4.11.0"
 
 stream-transform@^0.1.0:
@@ -2771,6 +2798,16 @@ underscore@~1.8.3:
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
 
+unique-random-array@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/unique-random-array/-/unique-random-array-1.0.0.tgz#42b3721c579388d8b667c93c2dbde3d5d81a9136"
+  dependencies:
+    unique-random "^1.0.0"
+
+unique-random@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/unique-random/-/unique-random-1.0.0.tgz#ce3e224c8242cd33a0e77b0d7180d77e6b62d0c4"
+
 unorm@^1.3.3:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/unorm/-/unorm-1.4.1.tgz#364200d5f13646ca8bcd44490271335614792300"
@@ -2852,6 +2889,10 @@ wide-align@^1.1.0:
 window-size@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/window-size/-/window-size-0.1.0.tgz#5438cd2ea93b202efa3a19fe8887aee7c94f9c9d"
+
+word-list@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/word-list/-/word-list-2.0.0.tgz#54ddfa4aae1faa71772cfb6e9208c4d8f999363e"
 
 wordwrap@0.0.2:
   version "0.0.2"
