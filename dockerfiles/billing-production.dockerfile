@@ -1,4 +1,4 @@
-FROM node:6
+FROM node:6.10
 
 # TODO: use `production` but first we have to fix packages `engines` to be all compatible with 6.x
 #ENV THOR_ENV production
@@ -13,7 +13,6 @@ COPY ./index.js /billing/index.js
 
 WORKDIR /billing
 
-RUN npm i -g yarn@0.18.2
 RUN yarn --ignore-engines
 
 CMD npm run start-prod
