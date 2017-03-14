@@ -8,7 +8,7 @@ const ReadableStream = require('stream').Readable;
 const errors = require('storj-service-error-types');
 // const log = require('../../../lib/logger');
 
-describe('Debits Router', function() {
+describe('Credits Router', function() {
 
 
 
