@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/Storj/billing/badge.svg?branch=master)](https://coveralls.io/github/Storj/billing?branch=master)
+
 ## Billing Setup
 
 ### 1. Fork and clone `Storj/billing`
