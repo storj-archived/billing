@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Storj API",
+    "title": "Storj Billing API",
     "version": "0.7.0"
   },
   "host": "api.storj.io",
