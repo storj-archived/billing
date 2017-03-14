@@ -8,9 +8,10 @@ afterEach(() => {
 
 describe('#stripe', function() {
 
-  it('it should return stripe instance', function() {
+  it('it should return stripe instance', function(done) {
     expect(stripe).to.not.equal(undefined);
     expect(stripe).to.be.instanceOf(Object);
+    done();
   });
 
 })
