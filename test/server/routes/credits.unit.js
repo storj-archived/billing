@@ -11,8 +11,11 @@ const mongoose = require('mongoose');
 
 describe('Credits Router', function() {
   const creditsRouter = new CreditsRouter(routerOpts);
+  let sandbox;
 
-  before(function(done) {
+  beforeEach(function(done) {
+    sandbox = sinon.sandbox.create();
+
     var marketingDoc = new creditsRouter.models.Marketing({
       user: 'sender@example123.com',
       referralLink: 'abc-123'
@@ -22,7 +25,13 @@ describe('Credits Router', function() {
       _id: 'user@example.com',
       hashpass: storj.utils.sha256('password')
     });
+
     done();
+  });
+
+  afterEach(function() {
+    // how do afterEach apply to it / describe blocks ??
+    sandbox.restore();
   });
 
   describe('#handleSignups', function() {
@@ -30,10 +39,14 @@ describe('Credits Router', function() {
     describe('#handleReferralSignups', function() {
 
       it('return create referral with valid props', function() {
+        sandbox.stub();
         var request = httpMocks.createRequest({
           method: 'POST',
           url: '/signups',
-          body: {}
+          body: {
+            email: 'recipient@example.com',
+            referralLink: 'abc-123'
+          }
         });
 
         var response = httpMocks.createResponse({
@@ -41,11 +54,17 @@ describe('Credits Router', function() {
           eventEmitter: EventEmitter
         });
 
-        creditsRouter.handleSignups(request, response);
+        response.on('end', function() {
+          console.log('this doesnt fire');
+        });
 
-        var data = response._getData();
-        console.log(data);
-        console.log(response.statusCode);
+        response.on('error', function(err){
+          console.log('Error: ', err);
+        });
+
+        //stub marketing create
+        creditsRouter.handleSignups(request, response);
+        expect(response.statusCode).to.equal(200);
       });
 
     });
