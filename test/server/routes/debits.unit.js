@@ -38,18 +38,18 @@ describe('#debitsRouter', function() {
   describe('#createDebit', function() {
 
 
-    it('should create a bucket and return a bucket object', function(done) {
+    it('should create a debit and return the debit object', function(done) {
       // var mockUser = new debitsRouter.storage.models.User({
       //   _id: 'dylan@storj.io',
       //   hashpass: storj.utils.sha256('password')
       // });
       //
-      // var mockDebit = new debitsRouter.storage.models.Debit({
-      //   amount: 666,
-      //   user: 'lott.dylan@gmail.com',
-      //   type: 'bandwidth',
-      //   created: new Date()
-      // });
+      var mockDebit = new debitsRouter.storage.models.Debit({
+        amount: 666,
+        user: 'lott.dylan@gmail.com',
+        type: 'bandwidth',
+        created: new Date()
+      });
 
       var req = httpMocks.createRequest({
         method: 'POST',
@@ -66,26 +66,25 @@ describe('#debitsRouter', function() {
         eventEmitter: EventEmitter,
         req: req
       });
-      // req.user = mockUser;
 
-      // var _createDebit = sandbox
-      //   .stub(debitsRouter.storage.models.Debit, 'create')
-        // .resolves(mockDebit)()
-        // .then((data) => {
-        //   console.log(data);
-        // })
+      var _createDebit = sandbox
+        .stub(debitsRouter.storage.models.Debit, 'create')
+        .resolves(mockDebit)()
+        .then((data) => {
+          // console.log(data);
 
-      res.on('send', function() {
-        console.log('res on send: ', res._getData());
-      });
+          res.on('send', function() {
+            console.log('res on send: ', res._getData());
+          });
 
-      res.on('end', function() {
-        console.log('res on data', res._getData());
-      });
+          res.on('end', function() {
+            console.log('res on data', res._getData());
+          });
 
-      debitsRouter.createDebit(req, res);
+          debitsRouter.createDebit(req, res);
+          done();
+        });
       // console.log(res._getData());
-      done();
     });
 
     // it('should return 500 error code', function(done) {
