@@ -62,6 +62,7 @@
     "rimraf": "^2.5.3",
     "sinon": "^1.17.7",
     "sinon-as-promised": "^4.0.2",
+    "sinon-stub-promise": "^4.0.0",
     "supertest": "^3.0.0"
   },
   "dependencies": {
