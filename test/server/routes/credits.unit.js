@@ -7,7 +7,6 @@ const expect = require('chai').expect;
 const EventEmitter = require('events').EventEmitter;
 const CreditsRouter = require('../../../lib/server/routes/credits');
 const errors = require('storj-service-error-types');
-// const log = require('../../../lib/logger');
 const routerOpts = require('../../_fixtures/router-opts');
 const mongoose = require('mongoose');
 const constants = require('../../../lib/constants');
@@ -20,24 +19,20 @@ describe('Credits Router', function() {
   beforeEach(function(done) {
     sandbox = sinon.sandbox.create();
 
-    var marketingDoc = new creditsRouter.models.Marketing({
-      user: 'sender@example123.com',
-      referralLink: 'abc-123'
-    });
-
-    var sender = new creditsRouter.models.User({
-      _id: 'user@example.com',
-      hashpass: storj.utils.sha256('password')
-    });
-
-    done();
-  });
-
-  afterEach(function() {
     creditsRouter.models.Marketing.find({}).remove();
     creditsRouter.models.Credit.find({}).remove();
     creditsRouter.models.Referral.find({}).remove();
+    creditsRouter.models.User.find({}).remove();
+    done();
+  });
+
+  afterEach(function(done) {
+    creditsRouter.models.Marketing.find({}).remove();
+    creditsRouter.models.Credit.find({}).remove();
+    creditsRouter.models.Referral.find({}).remove();
+    creditsRouter.models.User.find({}).remove();
     sandbox.restore();
+    done()
   });
 
   describe('#handleSignups', function() {
@@ -49,6 +44,16 @@ describe('Credits Router', function() {
           user: 'lott.dylan@gmail.com',
           created: Date.now(),
           referralLink: 'abc-123'
+        });
+
+        const marketingDoc = new creditsRouter.models.Marketing({
+          user: 'sender@example123.com',
+          referralLink: 'abc-123'
+        });
+
+        const sender = new creditsRouter.models.User({
+          _id: 'user@example.com',
+          hashpass: storj.utils.sha256('password')
         });
 
         sandbox.stub(creditsRouter.models.Marketing, 'create')
@@ -63,7 +68,6 @@ describe('Credits Router', function() {
           sender: {
             email: 'sender@example.com',
             amount_to_credit: 1234,
-            credit: '',
             referralLink: 'abc-123'
           },
           recipient: {
@@ -72,7 +76,7 @@ describe('Credits Router', function() {
           },
           created: Date.now(),
           count: 1
-        })
+        });
 
         var req = httpMocks.createRequest({
           method: 'POST',
@@ -105,19 +109,167 @@ describe('Credits Router', function() {
         convertReferral.resolves(mockReferral);
 
         res.on('end', function() {
+          const data = res._getData();
+          // console.log(data);
           expect(res.statusCode).to.equal(200);
           expect(res.statusMessage).to.equal('OK');
-          const data = res._getData();
-          console.log(data);
-          // console.log('### DATA ###', data);
           expect(data.recipient).to.be.ok;
           expect(data.sender).to.be.ok;
+          expect(data.recipient.min_spent_requirement).to.equal(constants.PROMO_AMOUNT.MIN_SPENT_REQUIREMENT)
           expect(data.recipient.email).to.equal(req.body.email);
+          expect(data.recipient.amount_to_credit).to.equal(mockReferral.recipient.amount_to_credit);
           expect(data.sender.referralLink).to.equal(req.body.referralLink);
           expect(data.sender.amount_to_credit).to.equal(mockReferral.sender.amount_to_credit);
         });
 
         creditsRouter.handleSignups(req, res);
+        done();
+      });
+
+      it('should handleRegularSignup if referralLink invalid', function(done) {
+        const err = {
+          message: 'Invalid referral link'
+        }
+
+        var req = httpMocks.createRequest({
+          method: 'POST',
+          url: '/signups',
+          body: {
+            email: 'user@example.com',
+            referralLink: 'invalidreferrallink'
+          }
+        });
+
+        var res = httpMocks.createResponse({
+          req: req,
+          eventEmitter: EventEmitter
+        });
+
+        const mockMarketing = new creditsRouter.models.Marketing({
+          user: req.body.email,
+          created: Date.now(),
+          referralLink: req.body.referralLink
+        });
+
+        const mockCredit = new creditsRouter.models.Credit({
+          user: req.body.email
+        });
+
+        var isValid = sandbox.stub(creditsRouter.models.Marketing, 'isValidReferralLink')
+          .returnsPromise();
+        isValid.rejects(err);
+
+        var _create = sandbox.stub(creditsRouter.models.Marketing, 'create')
+          .callsArgWith(1)
+
+        // var issueRegular = sandbox.stub(creditsRouter, '_issueRegularSignupCredit').returnsPromise();
+        // issueRegular.resolves(mockCredit);
+        // res.on('end', function(){
+        //   const data = res._getData();
+        //   console.log('#### DATA', data);
+        // })
+        var issueRegular = sandbox.spy(creditsRouter, '_issueRegularSignupCredit');
+        var handleRegular = sandbox.spy(creditsRouter, 'handleRegularSignup');
+        expect(issueRegular).to.have.been.called;
+        creditsRouter.handleSignups(req, res);
+        done();
+      });
+
+      it('should return error if marketing#create fails', function(done) {
+        var req = httpMocks.createRequest({
+          method: 'POST',
+          url: '/signups',
+          body: {
+            email: 'user@example.com',
+            referralLink: 'abc-123'
+          }
+        });
+
+        var res = httpMocks.createResponse({
+          req: req,
+          eventEmitter: EventEmitter
+        });
+
+        var _create = sandbox.stub(creditsRouter.models.Marketing, 'create')
+          .callsArgWith(1, new Error('Panic!'));
+
+        res.on('end', function() {
+          const data = res._getData();
+          expect(res.statusCode).to.equal(500);
+          expect(data).to.be.instanceOf(Error);
+        });
+
+        creditsRouter.handleSignups(req, res);
+        done();
+      });
+
+      it('should call handleReferralSignup', function(done) {
+        var req = httpMocks.createRequest({
+          method: 'POST',
+          url: '/signups',
+          body: {
+            email: 'user@example.com',
+            referralLink: 'abc-123'
+          }
+        });
+
+        var res = httpMocks.createResponse({
+          req: req,
+          eventEmitter: EventEmitter
+        });
+
+        const mockMarketing = new creditsRouter.models.Marketing({
+          user: req.body.email,
+          created: Date.now(),
+          referralLink: req.body.referralLink
+        });
+
+        var _create = sandbox.stub(creditsRouter.models.Marketing, 'create')
+          .callsArgWith(1, null, mockMarketing);
+        var _handleReferral = sandbox.spy(creditsRouter, 'handleReferralSignup');
+
+        creditsRouter.handleSignups(req, res);
+        expect(_handleReferral.called).to.equal(true);
+        done();
+      });
+
+      it('should call handleRegularSignup if no referral', function(done){
+        var req = httpMocks.createRequest({
+          method: 'POST',
+          url: '/signups',
+          body: {
+            email: 'user@example.com'
+          }
+        });
+
+        var res = httpMocks.createResponse({
+          req: req,
+          eventEmitter: EventEmitter
+        });
+
+        const mockMarketing = new creditsRouter.models.Marketing({
+          user: req.body.email,
+          created: Date.now(),
+          referralLink: req.body.referralLink
+        });
+        var _create = sandbox.stub(creditsRouter.models.Marketing, 'create')
+          .callsArgWith(1, null, mockMarketing);
+
+        var _handleRegular = sandbox.spy(creditsRouter, 'handleRegularSignup');
+
+        creditsRouter.handleSignups(req, res);
+        expect(_handleRegular.called).to.equal(true);
+        expect(_handleRegular.callCount).to.equal(1);
+        done();
+      });
+
+      it('#_issueRegularSignupCredit', function(done) {
+        const data = {
+          email: 'user@example.com'
+        };
+
+        creditsRouter._issueRegularSignupCredit(data);
+
         done();
       });
 

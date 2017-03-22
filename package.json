@@ -51,7 +51,7 @@
     "eslint-plugin-standard": "^2.1.1",
     "events": "^1.1.1",
     "ink-docstrap": "boshevski/docstrap",
-    "istanbul": "^0.4.1",
+    "istanbul": "^0.4.5",
     "jsdoc": "^3.4.0",
     "jshint": "2.8.0",
     "memdown": "^1.1.2",
