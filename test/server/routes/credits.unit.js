@@ -10,29 +10,31 @@ const errors = require('storj-service-error-types');
 const routerOpts = require('../../_fixtures/router-opts');
 const mongoose = require('mongoose');
 const constants = require('../../../lib/constants');
+const Config = require('../../../lib/config');
+const Mailer = require('storj-service-mailer');
 
 describe('Credits Router', function() {
-  console.log('### NODE_ENV: ', process.env.NODE_ENV);
   const creditsRouter = new CreditsRouter(routerOpts);
   let sandbox;
 
   beforeEach(function(done) {
     sandbox = sinon.sandbox.create();
-
-    creditsRouter.models.Marketing.find({}).remove();
-    creditsRouter.models.Credit.find({}).remove();
-    creditsRouter.models.Referral.find({}).remove();
-    creditsRouter.models.User.find({}).remove();
     done();
   });
 
   afterEach(function(done) {
-    creditsRouter.models.Marketing.find({}).remove();
-    creditsRouter.models.Credit.find({}).remove();
-    creditsRouter.models.Referral.find({}).remove();
-    creditsRouter.models.User.find({}).remove();
     sandbox.restore();
     done()
+  });
+
+  describe('@constructor', function() {
+    it('smoke test', function(done) {
+      expect(creditsRouter.config).to.be.instanceOf(Config);
+      expect(creditsRouter).to.be.instanceOf(CreditsRouter);
+      expect(creditsRouter.mailer).to.be.instanceOf(Mailer);
+      expect(creditsRouter.models).to.be.ok;
+      done();
+    });
   });
 
   describe('#handleSignups', function() {
@@ -40,6 +42,7 @@ describe('Credits Router', function() {
     describe('#handleReferralSignups', function() {
 
       it('create referral with valid props', function(done) {
+        const handleSignupsSpy = sandbox.spy(creditsRouter, 'handleSignups')
         const mockMarketingDoc = new creditsRouter.models.Marketing({
           user: 'lott.dylan@gmail.com',
           created: Date.now(),
@@ -110,7 +113,7 @@ describe('Credits Router', function() {
 
         res.on('end', function() {
           const data = res._getData();
-          // console.log(data);
+          console.log('### CREATE CREDIT ###', data);
           expect(res.statusCode).to.equal(200);
           expect(res.statusMessage).to.equal('OK');
           expect(data.recipient).to.be.ok;
@@ -123,6 +126,9 @@ describe('Credits Router', function() {
         });
 
         creditsRouter.handleSignups(req, res);
+
+        expect(handleSignupsSpy.callCount).to.equal(1);
+        console.log('#### HANDLE SIGNUPS FINISHED');
         done();
       });
 
@@ -162,12 +168,6 @@ describe('Credits Router', function() {
         var _create = sandbox.stub(creditsRouter.models.Marketing, 'create')
           .callsArgWith(1)
 
-        // var issueRegular = sandbox.stub(creditsRouter, '_issueRegularSignupCredit').returnsPromise();
-        // issueRegular.resolves(mockCredit);
-        // res.on('end', function(){
-        //   const data = res._getData();
-        //   console.log('#### DATA', data);
-        // })
         var issueRegular = sandbox.spy(creditsRouter, '_issueRegularSignupCredit');
         var handleRegular = sandbox.spy(creditsRouter, 'handleRegularSignup');
         expect(issueRegular).to.have.been.called;
@@ -195,6 +195,7 @@ describe('Credits Router', function() {
 
         res.on('end', function() {
           const data = res._getData();
+          console.log('### marketing Create error ###', data);
           expect(res.statusCode).to.equal(500);
           expect(data).to.be.instanceOf(Error);
         });

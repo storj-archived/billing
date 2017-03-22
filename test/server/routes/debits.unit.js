@@ -10,6 +10,8 @@ const DebitsRouter = require('../../../lib/server/routes/debits');
 const ReadableStream = require('stream').Readable;
 const errors = require('storj-service-error-types');
 const routerOpts = require('../../_fixtures/router-opts');
+const Mailer = require('storj-service-mailer');
+const Storage = require('storj-service-storage-models');
 
 let sandbox;
 
@@ -26,12 +28,14 @@ describe('#debitsRouter', function() {
 
   describe('smoke test', function() {
     it('debitsRouter should exist with proper configs', function(done) {
-      expect(debitsRouter).to.be.ok;
-      expect(debitsRouter.storage).to.be.ok;
+      expect(debitsRouter).to.be.instanceOf(DebitsRouter);
       expect(debitsRouter.models).to.be.ok;
       expect(debitsRouter.mailer).to.be.ok;
       expect(debitsRouter.contracts).to.be.ok;
+      expect(debitsRouter.storage).to.be.instanceOf(Storage);
+      expect(debitsRouter.mailer).to.be.instanceOf(Mailer);
       expect(debitsRouter.config).to.equal(routerOpts.config);
+      expect(debitsRouter.config).to.be.instanceOf(Config);
       done();
     });
   });
@@ -42,7 +46,7 @@ describe('#debitsRouter', function() {
         amount: 666,
         user: 'lott.dylan@gmail.com',
         type: 'bandwidth',
-        created: new Date()
+        created: Date.now()
       });
 
       var mockPaymentProcessor = new debitsRouter.storage.models.PaymentProcessor({
@@ -54,12 +58,7 @@ describe('#debitsRouter', function() {
       var req = httpMocks.createRequest({
         method: 'POST',
         url: '/debits',
-        body: {
-          user: "user@example.com",
-          type: "bandwidth",
-          amount: 123456,
-          created: new Date()
-        }
+        body: mockDebit
       });
 
       var res = httpMocks.createResponse({
@@ -105,6 +104,11 @@ describe('#debitsRouter', function() {
       });
 
       debitsRouter.createDebit(req, res);
+
+      expect(_createDebit.callCount).to.equal(1);
+      expect(_findPaymentProc.callCount).to.equal(1);
+      expect(_find.callCount).to.equal(1);
+      expect(_sync.callCount).to.equal(1);
       done();
     });
 
@@ -137,6 +141,8 @@ describe('#debitsRouter', function() {
       });
 
       debitsRouter.createDebit(req, res);
+
+      expect(_createSpy.callCount).to.equal(0);
       done();
     });
 
@@ -166,6 +172,8 @@ describe('#debitsRouter', function() {
       });
 
       debitsRouter.createDebit(req, res);
+
+      expect(_createSpy.callCount).to.equal(0);
       done();
     });
 
@@ -201,17 +209,80 @@ describe('#debitsRouter', function() {
       const err = new errors.InternalError('Panic!');
       _createDebit.rejects(err);
 
-      res.on('end', function(){
+      res.on('end', function(done){
         const data = res._getData();
-        expect(data.error).to.be.ok;
+        expect(data.error).to.equal(123);
         expect(data.error.statusCode).to.equal(500);
         expect(data.error.message).to.equal('Panic!');
-      })
+        expect(_createDebit.callCount).to.equal(1);
+        done();
+      });
 
       debitsRouter.createDebit(req, res);
+      expect(_createDebit.callCount).to.equal(1);
+      done();
+    });
+
+    it('should return 500 if error syncing debits', function(done) {
+      var mockDebit = new debitsRouter.storage.models.Debit({
+        amount: 666,
+        user: 'lott.dylan@gmail.com',
+        type: 'bandwidth',
+        created: new Date()
+      });
+
+      var mockPaymentProcessor = new debitsRouter.storage.models.PaymentProcessor({
+        user: "dylan@storj.io",
+        name: "stripe",
+        default: true
+      });
+
+      var req = httpMocks.createRequest({
+        method: 'POST',
+        url: '/debits',
+        body: mockDebit
+      });
+
+      var res = httpMocks.createResponse({
+        eventEmitter: EventEmitter,
+        req: req
+      });
+
+      var _createDebit = sandbox
+        .stub(debitsRouter.storage.models.Debit, 'create')
+        .returnsPromise();
+
+      _createDebit.resolves(mockDebit);
+
+      var _findPaymentProc = sandbox
+        .stub(debitsRouter.storage.models.PaymentProcessor, 'findOne')
+        .returnsPromise();
+
+      _findPaymentProc.resolves(mockPaymentProcessor);
+
+      var _find = sandbox
+        .stub(debitsRouter.storage.models.Debit, 'find')
+        .returnsPromise();
+      _find.resolves([mockDebit]);
+
+      var _sync = sandbox
+        .stub(mockPaymentProcessor.adapter, 'syncDebits')
+        .returnsPromise();
+      _sync.rejects(new errors.InternalError('Panic Sync Debits!'));
+
+      res.on('end', function() {
+        const data = res._getData();
+        expect(data).to.be.ok;
+        console.log('#### 500 SYNC DEBITS');
+      });
+
+      debitsRouter.createDebit(req, res);
+
+      expect(_findPaymentProc.callCount).to.equal(1);
+      expect(_createDebit.callCount).to.equal(1);
+      expect(_find.callCount).to.equal(1);
+      expect(_sync.callCount).to.equal(1);
       done();
     });
   });
-
-
 });
