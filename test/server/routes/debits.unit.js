@@ -2,6 +2,7 @@ const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
 const stubPromise = require('sinon-stub-promise');
 stubPromise(sinon);
+const rewire = require('rewire');
 const storj = require('storj-lib');
 const expect = require('chai').expect;
 const EventEmitter = require('events').EventEmitter;
@@ -12,6 +13,8 @@ const errors = require('storj-service-error-types');
 const routerOpts = require('../../_fixtures/router-opts');
 const Mailer = require('storj-service-mailer');
 const Storage = require('storj-service-storage-models');
+const moment = require('moment');
+const assert = require('assert');
 
 let sandbox;
 
@@ -273,7 +276,9 @@ describe('#debitsRouter', function() {
       res.on('end', function() {
         const data = res._getData();
         expect(data).to.be.ok;
-        console.log('#### 500 SYNC DEBITS');
+        expect(data.error).to.be.instanceOf(Error);
+        expect(data.debit).to.equal(mockDebit);
+        expect(data.error.message).to.equal('Panic Sync Debits!');
       });
 
       debitsRouter.createDebit(req, res);
@@ -284,5 +289,74 @@ describe('#debitsRouter', function() {
       expect(_sync.callCount).to.equal(1);
       done();
     });
+
+    it('should return 201 with new debit if no paymentProc', (done) => {
+      var mockDebit = new debitsRouter.storage.models.Debit({
+        amount: 666,
+        user: 'lott.dylan@gmail.com',
+        type: 'bandwidth',
+        created: new Date()
+      });
+
+      var req = httpMocks.createRequest({
+        method: 'POST',
+        url: '/debits',
+        body: mockDebit
+      });
+
+      var res = httpMocks.createResponse({
+        eventEmitter: EventEmitter,
+        req: req
+      });
+
+      var _createDebit = sandbox
+        .stub(debitsRouter.storage.models.Debit, 'create')
+        .returnsPromise();
+
+      _createDebit.resolves(mockDebit);
+
+      var _findPaymentProc = sandbox
+        .stub(debitsRouter.storage.models.PaymentProcessor, 'findOne')
+        .returnsPromise();
+
+      _findPaymentProc.resolves(null);
+
+      var _find = sandbox
+        .stub(debitsRouter.storage.models.Debit, 'find')
+        .returnsPromise();
+      _find.resolves([mockDebit]);
+
+      res.on('end', function() {
+        const data = res._getData();
+        expect(data).to.be.ok;
+        expect(data.debit).to.equal(mockDebit);
+      });
+
+      debitsRouter.createDebit(req, res);
+
+      expect(_findPaymentProc.callCount).to.equal(1);
+      expect(_createDebit.callCount).to.equal(1);
+      expect(_find.callCount).to.equal(1);
+      done();
+    });
+
+    it('#_getBillingPeriodFor', (done) => {
+      const refMoment = moment.utc([2011, 3, 27])
+      const billingDate = refMoment.date();
+      const date = debitsRouter._getBillingPeriodFor(refMoment, billingDate);
+      expect(date).to.be.an('object');
+      expect(date.startMoment).to.be.instanceOf(moment);
+      expect(date.endMoment).to.be.instanceOf(moment);
+      expect(moment(date.endMoment) - moment(date.startMoment)).to.equal(2678400000);
+      done();
+    });
+
+    it('#_getBillingPeriodFor with default params', (done) => {
+      const date = debitsRouter._getBillingPeriodFor();
+      expect(date).to.be.an('object');
+      expect(date.startMoment).to.be.instanceOf(moment);
+      expect(date.endMoment).to.be.instanceOf(moment);
+      done();
+    })
   });
 });
