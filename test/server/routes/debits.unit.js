@@ -72,13 +72,11 @@ describe('#debitsRouter', function() {
       var _createDebit = sandbox
         .stub(debitsRouter.storage.models.Debit, 'create')
         .returnsPromise();
-
       _createDebit.resolves(mockDebit);
 
       var _findPaymentProc = sandbox
         .stub(debitsRouter.storage.models.PaymentProcessor, 'findOne')
         .returnsPromise();
-
       _findPaymentProc.resolves(mockPaymentProcessor);
 
       var _find = sandbox
