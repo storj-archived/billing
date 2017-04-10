@@ -14,6 +14,7 @@ const Mailer = require('storj-service-mailer');
 const Storage = require('storj-service-storage-models');
 const defaults = require('../../../lib/config.js').DEFAULTS;
 const mailer = new Mailer(defaults.mailer);
+const Promise = require('bluebird');
 
 let sandbox;
 
@@ -54,17 +55,16 @@ describe('#referralsRouter', function() {
         referralLink: 'abc-123'
       });
 
-      const resolve = function(x) {return x};
+      const _dispatch = sinon.stub(Mailer.prototype, 'dispatch')
+        .callsArgWith(3, null);
 
-      const _dispatch = sandbox
-        .stub(mailer.prototype, 'dispatch')
-        .yields();
+      const refs = referrals._sendEmail(sender, recipient, marketing);
 
-      referrals._sendEmail(sender, recipient, marketing);
-
+      expect(refs).to.be.instanceOf(Promise);
       expect(_dispatch.callCount).to.equal(1);
       done();
     });
 
   });
+
 });
