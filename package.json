@@ -64,6 +64,7 @@
     "rimraf": "^2.5.3",
     "sinon": "^1.17.7",
     "sinon-as-promised": "^4.0.3",
+    "sinon-bluebird": "^3.1.0",
     "sinon-stub-promise": "^4.0.0",
     "storj-complex": "^5.1.0",
     "supertest": "^3.0.0"
