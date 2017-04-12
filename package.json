@@ -16,7 +16,7 @@
     "linter": "./node_modules/.bin/eslint ./index.js ./lib ./test",
     "start-dev": "NODE_ENV=develop nodemon ./bin/storj-billing.js",
     "start-prod": "NODE_ENV=production node ./bin/storj-billing.js",
-    "test": "npm run testsuite && npm run linter"
+    "test": "npm run testsuite"
   },
   "repository": {
     "type": "git",
