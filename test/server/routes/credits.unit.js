@@ -281,7 +281,7 @@ describe('Credits Router', function() {
         expect(data.created).to.be.instanceOf(Date);
         expect(data.id).to.be.a('string');
         expect(data.recipient.email).to.equal(mockReferral.recipient.email);
-        expect(data.recipient.min_spent_requirement).to.equal(10);
+        expect(data.recipient.min_spent_requirement).to.equal(1000);
         expect(data.sender.referralLink).to.equal(mockReferral.sender.referralLink);
 
         console.log(data);
@@ -446,7 +446,7 @@ describe('Credits Router', function() {
           expect(data.recipient).to.be.ok;
           expect(data.recipient.email).to.equal(mockReferral.recipient.email);
           expect(data.sender.referralLink).to.equal(mockReferral.sender.referralLink);
-          expect(data.recipient.min_spent_requirement).to.equal(10);
+          expect(data.recipient.min_spent_requirement).to.equal(1000);
           console.log('REFERRAL DATA: ', data)
         });
 

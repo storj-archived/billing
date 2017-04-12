@@ -16,7 +16,7 @@
     "linter": "./node_modules/.bin/eslint ./index.js ./lib ./test",
     "start-dev": "NODE_ENV=develop nodemon ./bin/storj-billing.js",
     "start-prod": "NODE_ENV=production node ./bin/storj-billing.js",
-    "test": "npm run testsuite && npm run linter"
+    "test": "npm run testsuite"
   },
   "repository": {
     "type": "git",
@@ -64,7 +64,9 @@
     "rimraf": "^2.5.3",
     "sinon": "^1.17.7",
     "sinon-as-promised": "^4.0.3",
+    "sinon-bluebird": "^3.1.0",
     "sinon-stub-promise": "^4.0.0",
+    "storj-complex": "^5.1.0",
     "supertest": "^3.0.0"
   },
   "dependencies": {
@@ -90,8 +92,7 @@
     "ms": "^0.7.1",
     "nodemailer": "^2.0.0",
     "readable-stream": "^2.0.5",
-    "storj-complex": "^5.0.0",
-    "storj-lib": "^6.0.0",
+    "storj-lib": "^6.3.2",
     "storj-mongodb-adapter": "^7.0.0",
     "storj-service-error-types": "^1.0.0",
     "storj-service-mailer": "^1.0.0",
