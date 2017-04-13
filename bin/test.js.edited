@@ -49,14 +49,14 @@ connectedPromise
 
       for (let i = 0; i < 1; i++) {
         promiseChain = promiseChain.then(() => {
-          const endTimestamp = moment.utc().subtract(1, 'day').add(i, 'day').valueOf();
+          const endTimestamp = moment.utc().subtract(2, 'day').add(i, 'day').valueOf();
           const beginTimestamp = moment.utc(endTimestamp).subtract(1, 'day').valueOf();
           const timestampRange = `timestamp range: ${moment.utc(beginTimestamp)
             .format('MM-DD-YYYY')}-${moment.utc(endTimestamp)
             .format('MM-DD-YYYY')}`;
           console.log(timestampRange);
 
-          console.log('starting...');
+          // console.log('starting...');
           const bandwidthDebitPromise = generateDebits
             .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH)
             .then(() => console.log(`... ${timestampRange} forBandwidth done!`));
@@ -66,10 +66,14 @@ connectedPromise
 
           console.log(`Kicking off debit calculation for ${timestampRange}`);
           return Promise.all([bandwidthDebitPromise, storageDebitPromise])
-            .then(() => console.log("Done with bandwidthDebitPromise and storageDebitPromise"));
+            .then(() => console.log("Done with bandwidthDebitPromise and storageDebitPromise"))
+            .catch(function(err) {
+              console.log("error from promise.all: ", err);
+            });
         })
       }
 
+      // Promise.all(bandwidthDebitsPromises.concat(storageDebitsPromises))
       promiseChain
         .then(countDebits)
         .then(() => process.exit(0));
@@ -77,15 +81,19 @@ connectedPromise
   })
   .catch(function(err) {
     // throw new Error(err);
+    console.log('ERROR: ', err);
+    console.error(JSON.stringify(err));
     countDebits(() => {
-      console.error(err);
       process.exit(1);
     })
   });
 
 function countDebits() {
   return storage.models.Debit.count()
-    .then(count => console.log(count));
+    .then(count => console.log(count))
+    .catch(function(err) {
+      console.log('Error from count debits: ', err);
+    });
 }
 
 function deleteDebits() {
