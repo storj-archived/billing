@@ -12,11 +12,13 @@ const CENTS_PER_GB_STORAGE = .002054795;
 const MONGO_USERNAME = process.env.MONGO_USERNAME && process.env.MONGO_USERNAME.match(/\S+/)[0];
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD && process.env.MONGO_PASSWORD.match(/\S+/)[0];
 const MONGOS = JSON.parse(process.env.MONGOS || 'false');
+const REPLSET = JSON.parse(process.env.REPLSET || 'false');
 const MONGO_SSL = JSON.parse(process.env.MONGO_SSL || 'false');
 const mongoOptions = {
   user: MONGO_USERNAME,
   pass: MONGO_PASSWORD,
   mongos: MONGOS,
+  replset: REPLSET,
   ssl: MONGO_SSL
 };
 
@@ -44,13 +46,14 @@ connectedPromise
     logger.debug('connected!');
     // const bandwidthDebitsPromises = [];
     // const storageDebitsPromises = [];
+    console.log('connected!');
 
     countDebits().then(function() {
       let promiseChain = Promise.resolve();
 
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 1; i++) {
         promiseChain = promiseChain.then(() => {
-          const endTimestamp = moment.utc().subtract(2, 'month').add(i, 'day').valueOf();
+          const endTimestamp = moment.utc().subtract(1, 'day').add(i, 'day').valueOf();
           const beginTimestamp = moment.utc(endTimestamp).subtract(1, 'day').valueOf();
           const timestampRange = `timestamp range: ${moment.utc(beginTimestamp)
             .format('MM-DD-YYYY')}-${moment.utc(endTimestamp)
@@ -59,18 +62,25 @@ connectedPromise
 
           // logger.debug('starting...');
           // bandwidthDebitsPromises.push(generateDebits
+          console.log('starting...');
           const bandwidthDebitPromise = generateDebits
             .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH); //);
           // .then(() => logger.debug(`... ${timestampRange} forBandwidth done!`)));
           // storageDebitsPromises.push(generateDebits
+            .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH)
+            .then(() => console.log(`... ${timestampRange} forBandwidth done!`));
           const storageDebitPromise = generateDebits
             .forStorage(beginTimestamp, endTimestamp, CENTS_PER_GB_STORAGE); //);
           // .then(() => logger.debug(`... ${timestampRange} forStorage done!`)));
+            .forStorage(beginTimestamp, endTimestamp, CENTS_PER_GB_STORAGE)
+            .then(() => console.log(`... ${timestampRange} forStorage done!`));
 
-          return Promise.all([bandwidthDebitPromise, storageDebitPromise]);
+          console.log(`Kicking off debit calculation for ${timestampRange}`);
+          return Promise.all([bandwidthDebitPromise, storageDebitPromise])
+            .then(() => console.log("Done with bandwidthDebitPromise and storageDebitPromise"));
         })
       }
-      // Promise.all(bandwidthDebitsPromises.concat(storageDebitsPromises))
+
       promiseChain
         .then(countDebits)
         .then(() => process.exit(0));
