@@ -8,7 +8,8 @@
     "test": "test"
   },
   "bin": {
-    "storj-billing": "bin/storj-billing.js"
+    "storj-billing": "bin/storj-billing.js",
+    "storj-billing-importer": "bin/billing-queries.js"
   },
   "scripts": {
     "testsuite": "STORJ_ALLOW_LOOPBACK=1 NODE_ENV=test _mocha --recursive test/**",
@@ -16,6 +17,7 @@
     "linter": "./node_modules/.bin/eslint ./index.js ./lib ./test",
     "start-dev": "NODE_ENV=develop nodemon ./bin/storj-billing.js",
     "start-prod": "NODE_ENV=production node ./bin/storj-billing.js",
+    "start-importer": "NODE_ENV=production node ./bin/billing-queries.js",
     "test": "npm run testsuite"
   },
   "repository": {

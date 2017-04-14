@@ -6,3 +6,4 @@ node_modules
 TODO.md
 .env
 coverage
+npm-debug.log
