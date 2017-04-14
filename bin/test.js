@@ -1,6 +1,7 @@
 #!/usr/bin/env node
+const logger = require('../lib/logger')();
 
-console.log('HELLO FROM TEST');
+logger.debug('HELLO FROM TEST');
 
 const moment = require('moment');
 const Storage = require('storj-service-storage-models');
@@ -38,9 +39,9 @@ module.exports = storage;
 
 connectedPromise
   .then(countDebits)
-  .then(deleteDebits)
+  // .then(deleteDebits)
   .then(function() {
-    console.log('connected!');
+    logger.debug('connected!');
     // const bandwidthDebitsPromises = [];
     // const storageDebitsPromises = [];
 
@@ -54,17 +55,17 @@ connectedPromise
           const timestampRange = `timestamp range: ${moment.utc(beginTimestamp)
             .format('MM-DD-YYYY')}-${moment.utc(endTimestamp)
             .format('MM-DD-YYYY')}`;
-          console.log(timestampRange);
+          logger.debug(timestampRange);
 
-          // console.log('starting...');
+          // logger.debug('starting...');
           // bandwidthDebitsPromises.push(generateDebits
           const bandwidthDebitPromise = generateDebits
             .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH); //);
-          // .then(() => console.log(`... ${timestampRange} forBandwidth done!`)));
+          // .then(() => logger.debug(`... ${timestampRange} forBandwidth done!`)));
           // storageDebitsPromises.push(generateDebits
           const storageDebitPromise = generateDebits
             .forStorage(beginTimestamp, endTimestamp, CENTS_PER_GB_STORAGE); //);
-          // .then(() => console.log(`... ${timestampRange} forStorage done!`)));
+          // .then(() => logger.debug(`... ${timestampRange} forStorage done!`)));
 
           return Promise.all([bandwidthDebitPromise, storageDebitPromise]);
         })
@@ -78,14 +79,14 @@ connectedPromise
   .catch(function(err) {
     // throw new Error(err);
     countDebits(() => {
-      console.error(err);
+      logger.error(err);
       process.exit(1);
     })
   });
 
 function countDebits() {
   return storage.models.Debit.count()
-    .then(count => console.log(count));
+    .then(count => logger.debug(count));
 }
 
 function deleteDebits() {

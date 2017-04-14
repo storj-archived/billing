@@ -1,6 +1,7 @@
 #!/usr/bin/env node
+const logger = require('../lib/logger')();
 
-console.log('HELLO FROM BILLING-QUERIES!');
+logger.debug('HELLO FROM BILLING-QUERIES!');
 
 const moment = require('moment');
 const Storage = require('storj-service-storage-models');
@@ -43,27 +44,27 @@ connectedPromise
       const job = new CronJob({
         cronTime: '0 0 0 * * *',
         onTick: function() {
-          console.log('connected!');
+          logger.debug('connected!');
           const now = moment().utc();
           const endTimestamp = moment.utc(
               `${now.year()}-${now.month() + 1}-${now.date()}`,
               'YYYY-MM-DD'
           ).valueOf();
           const beginTimestamp = moment.utc(endTimestamp).subtract(1, 'day').valueOf();
-          console.log(`timestamp range: ${beginTimestamp}-${endTimestamp}`);
+          logger.debug(`timestamp range: ${beginTimestamp}-${endTimestamp}`);
 
-          // console.log('starting...');
+          // logger.debug('starting...');
           const bandwidthDebitsPromise = generateDebits
               .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH)
-              .then(() => console.log('... forBandwidth done!'));
+              .then(() => logger.debug('... forBandwidth done!'));
           const storageDebitsPromise = generateDebits
               .forStorage(beginTimestamp, endTimestamp, CENTS_PER_GB_STORAGE)
-              .then(() => console.log('... forStorage done!'));
+              .then(() => logger.debug('... forStorage done!'));
           const referralCreditsPromise = generateReferralCredits()
-              .then(() => console.log('... referral credits done!'));
+              .then(() => logger.debug('... referral credits done!'));
 
           Promise.all([bandwidthDebitsPromise, storageDebitsPromise, referralCreditsPromise])
-              .then(() => console.log(
+              .then(() => logger.debug(
                   `IMPORT COMPLETE: ${moment.utc(beginTimestamp).format('YYYY-MM-DD HH:MM:SS')} - ${moment.utc(beginTimestamp).format('YYYY-MM-DD HH:MM:SS')}`
               ));
         },
@@ -73,7 +74,7 @@ connectedPromise
       job.start();
     })
     .catch(function(err) {
-      console.error('ERROR: ');
-      console.error(err);
+      logger.error('ERROR: ');
+      logger.error(err);
       // process.exit(1);
     });
