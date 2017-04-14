@@ -15,4 +15,4 @@ RUN chmod +x /root/bin/billing-queries.js
 
 WORKDIR /root
 
-CMD node /root/bin/billing-queries.js
+CMD npm run start-importer
