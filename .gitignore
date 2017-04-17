@@ -5,3 +5,5 @@ node_modules
 .idea/
 TODO.md
 .env
+coverage
+npm-debug.log

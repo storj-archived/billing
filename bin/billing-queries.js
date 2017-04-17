@@ -11,11 +11,13 @@ const CENTS_PER_GB_STORAGE = .002054795;
 const MONGO_USERNAME = process.env.MONGO_USERNAME && process.env.MONGO_USERNAME.match(/\S+/)[0];
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD && process.env.MONGO_PASSWORD.match(/\S+/)[0];
 const MONGOS = JSON.parse(process.env.MONGOS || 'false');
+const REPLSET = JSON.parse(process.env.REPLSET || 'false');
 const MONGO_SSL = JSON.parse(process.env.MONGO_SSL || 'false');
 const mongoOptions = {
   user: MONGO_USERNAME,
   pass: MONGO_PASSWORD,
   mongos: MONGOS,
+  replset: REPLSET,
   ssl: MONGO_SSL
 };
 
