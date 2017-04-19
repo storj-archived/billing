@@ -75,17 +75,14 @@ connectedPromise
         })
       }
 
-      promiseChain
+      return promiseChain
         .then(countDebits)
         .then(() => process.exit(0));
     })
   })
   .catch(function(err) {
-    // throw new Error(err);
-    countDebits(() => {
-      logger.error(err);
-      process.exit(1);
-    })
+    logger.error(err);
+    process.exit(1);
   });
 
 function countDebits() {
@@ -93,7 +90,7 @@ function countDebits() {
     .then(count => logger.debug(count));
 }
 
-function deleteDebits() {
-  logger.debug('DELETING DEBITS COLLECTION');
-  return storage.models.Debit.remove({});
-}
+// function deleteDebits() {
+//   logger.debug('DELETING DEBITS COLLECTION');
+//   return storage.models.Debit.remove({});
+// }

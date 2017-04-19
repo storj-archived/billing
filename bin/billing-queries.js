@@ -66,7 +66,10 @@ connectedPromise
           Promise.all([bandwidthDebitsPromise, storageDebitsPromise, referralCreditsPromise])
               .then(() => logger.debug(
                   `IMPORT COMPLETE: ${moment.utc(beginTimestamp).format('YYYY-MM-DD HH:MM:SS')} - ${moment.utc(beginTimestamp).format('YYYY-MM-DD HH:MM:SS')}`
-              ));
+              ))
+            .catch((err) => {
+              logger.error(err);
+            });
         },
         start: false,
         timeZone: 'UTC'
