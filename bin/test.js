@@ -5,8 +5,8 @@ console.log('HELLO FROM TEST');
 const moment = require('moment');
 const Storage = require('storj-service-storage-models');
 const BillingClient = require('../lib/utils/billing-client');
-const CENTS_PER_GB_BANDWIDTH = 5;
-const CENTS_PER_GB_STORAGE = .002054795;
+const DOLLARS_PER_GB_BANDWIDTH = 0.05;
+const DOLLARS_PER_GB_HOUR_STORAGE = .00002054795;
 
 const MONGO_USERNAME = process.env.MONGO_USERNAME && process.env.MONGO_USERNAME.match(/\S+/)[0];
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD && process.env.MONGO_PASSWORD.match(/\S+/)[0];
@@ -58,10 +58,10 @@ connectedPromise
 
           console.log('starting...');
           const bandwidthDebitPromise = generateDebits
-            .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH)
+            .forBandwidth(beginTimestamp, endTimestamp, DOLLARS_PER_GB_BANDWIDTH)
             .then(() => console.log(`... ${timestampRange} forBandwidth done!`));
           const storageDebitPromise = generateDebits
-            .forStorage(beginTimestamp, endTimestamp, CENTS_PER_GB_STORAGE)
+            .forStorage(beginTimestamp, endTimestamp, DOLLARS_PER_GB_HOUR_STORAGE)
             .then(() => console.log(`... ${timestampRange} forStorage done!`));
 
           console.log(`Kicking off debit calculation for ${timestampRange}`);

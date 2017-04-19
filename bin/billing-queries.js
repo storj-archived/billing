@@ -5,8 +5,8 @@ console.log('HELLO FROM BILLING-QUERIES!');
 const moment = require('moment');
 const Storage = require('storj-service-storage-models');
 const BillingClient = require('../lib/utils/billing-client');
-const CENTS_PER_GB_BANDWIDTH = 5;
-const CENTS_PER_GB_STORAGE = .002054795;
+const DOLLARS_PER_GB_BANDWIDTH = 0.05;
+const DOLLARS_PER_GB_HOUR_STORAGE = .00002054795;
 
 const MONGO_USERNAME = process.env.MONGO_USERNAME && process.env.MONGO_USERNAME.match(/\S+/)[0];
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD && process.env.MONGO_PASSWORD.match(/\S+/)[0];
@@ -54,10 +54,10 @@ connectedPromise
 
           // console.log('starting...');
           const bandwidthDebitsPromise = generateDebits
-              .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH)
+              .forBandwidth(beginTimestamp, endTimestamp, DOLLARS_PER_GB_BANDWIDTH)
               .then(() => console.log('... forBandwidth done!'));
           const storageDebitsPromise = generateDebits
-              .forStorage(beginTimestamp, endTimestamp, CENTS_PER_GB_STORAGE)
+              .forStorage(beginTimestamp, endTimestamp, DOLLARS_PER_GB_HOUR_STORAGE)
               .then(() => console.log('... forStorage done!'));
           const referralCreditsPromise = generateReferralCredits()
               .then(() => console.log('... referral credits done!'));
