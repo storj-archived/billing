@@ -13,5 +13,6 @@ RUN yarn install --ignore-engines
 COPY ./bin /billing/bin
 COPY ./lib /billing/lib
 COPY ./index.js /billing/index.js
+COPY ./test /billing/test
 
 CMD npm run start-dev

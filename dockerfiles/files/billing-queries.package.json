@@ -4,9 +4,10 @@
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
+    "start-importer": "NODE_ENV=production node ./bin/billing-queries.js"
   },
   "dependencies": {
-    "storj-service-storage-models": "bryanchriswhite/service-storage-models#master",
+    "storj-service-storage-models": "^8.16.1",
     "cron": "^1.1.1",
     "axios": "^0.15.3",
     "kad-logger-json": "^0.1.2"
