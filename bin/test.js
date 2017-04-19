@@ -1,6 +1,7 @@
 #!/usr/bin/env node
+const logger = require('../lib/logger');
 
-console.log('HELLO FROM TEST');
+logger.debug('HELLO FROM TEST');
 
 const moment = require('moment');
 const Storage = require('storj-service-storage-models');
@@ -40,9 +41,11 @@ module.exports = storage;
 
 connectedPromise
   .then(countDebits)
-  //.then(deleteDebits)
+  // .then(deleteDebits)
   .then(function() {
-    console.log('connected!');
+    logger.debug('connected!');
+    // const bandwidthDebitsPromises = [];
+    // const storageDebitsPromises = [];
 
     countDebits().then(function() {
       let promiseChain = Promise.resolve();
@@ -54,41 +57,40 @@ connectedPromise
           const timestampRange = `timestamp range: ${moment.utc(beginTimestamp)
             .format('MM-DD-YYYY')}-${moment.utc(endTimestamp)
             .format('MM-DD-YYYY')}`;
-          console.log(timestampRange);
+          logger.debug(timestampRange);
 
-          console.log('starting...');
+          // logger.debug('starting...');
+          // bandwidthDebitsPromises.push(generateDebits
+          logger.debug('starting...');
           const bandwidthDebitPromise = generateDebits
             .forBandwidth(beginTimestamp, endTimestamp, DOLLARS_PER_GB_BANDWIDTH)
-            .then(() => console.log(`... ${timestampRange} forBandwidth done!`));
+            .then(() => logger.debug(`... ${timestampRange} forBandwidth done!`));
           const storageDebitPromise = generateDebits
             .forStorage(beginTimestamp, endTimestamp, DOLLARS_PER_GB_HOUR_STORAGE)
-            .then(() => console.log(`... ${timestampRange} forStorage done!`));
+            .then(() => logger.debug(`... ${timestampRange} forStorage done!`));
 
-          console.log(`Kicking off debit calculation for ${timestampRange}`);
+          logger.debug(`Kicking off debit calculation for ${timestampRange}`);
           return Promise.all([bandwidthDebitPromise, storageDebitPromise])
-            .then(() => console.log("Done with bandwidthDebitPromise and storageDebitPromise"));
+            .then(() => logger.debug("Done with bandwidthDebitPromise and storageDebitPromise"));
         })
       }
 
-      promiseChain
+      return promiseChain
         .then(countDebits)
         .then(() => process.exit(0));
     })
   })
   .catch(function(err) {
-    // throw new Error(err);
-    countDebits(() => {
-      console.error(err);
-      process.exit(1);
-    })
+    logger.error(err);
+    process.exit(1);
   });
 
 function countDebits() {
   return storage.models.Debit.count()
-    .then(count => console.log(count));
+    .then(count => logger.debug(count));
 }
 
-function deleteDebits() {
-  console.log('DELETING DEBITS COLLECTION');
-  return storage.models.Debit.remove({});
-}
+// function deleteDebits() {
+//   logger.debug('DELETING DEBITS COLLECTION');
+//   return storage.models.Debit.remove({});
+// }
