@@ -54,10 +54,10 @@ connectedPromise
 
           // console.log('starting...');
           const bandwidthDebitsPromise = generateDebits
-              .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH)
+              .forBandwidth(beginTimestamp, endTimestamp, DOLLARS_PER_GB_BANDWIDTH)
               .then(() => console.log('... forBandwidth done!'));
           const storageDebitsPromise = generateDebits
-              .forStorage(beginTimestamp, endTimestamp, CENTS_PER_GB_STORAGE)
+              .forStorage(beginTimestamp, endTimestamp, DOLLARS_PER_GB_HOUR_STORAGE)
               .then(() => console.log('... forStorage done!'));
           const referralCreditsPromise = generateReferralCredits()
               .then(() => console.log('... referral credits done!'));

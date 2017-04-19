@@ -58,10 +58,10 @@ connectedPromise
 
           console.log('starting...');
           const bandwidthDebitPromise = generateDebits
-            .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH)
+            .forBandwidth(beginTimestamp, endTimestamp, DOLLARS_PER_GB_BANDWIDTH)
             .then(() => console.log(`... ${timestampRange} forBandwidth done!`));
           const storageDebitPromise = generateDebits
-            .forStorage(beginTimestamp, endTimestamp, CENTS_PER_GB_STORAGE)
+            .forStorage(beginTimestamp, endTimestamp, DOLLARS_PER_GB_HOUR_STORAGE)
             .then(() => console.log(`... ${timestampRange} forStorage done!`));
 
           console.log(`Kicking off debit calculation for ${timestampRange}`);
