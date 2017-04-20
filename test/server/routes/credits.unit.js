@@ -40,43 +40,43 @@ describe('Credits Router', function() {
     });
   });
 
-  describe('#handleReferralSignup', () => {
-    it('should ping handleReferralSignup', (done) => {
-      const mockMarketing = new credits.models.Marketing({
-        user: 'dylan@storj.io',
-        referralLink: 'abc-123'
-      });
-
-      var req = httpMocks.createRequest({
-        method: 'POST',
-        url: '/credits/signups',
-        body: {
-          email: 'dylan@storj.io',
-          referralLink: 'abc-123'
-        }
-      });
-
-      var res = httpMocks.createResponse({
-        eventEmitter: EventEmitter,
-        req: req
-      });
-
-      res.on('end', () => {
-        console.log('#### RETURN 200 #####', res._getData());
-
-      })
-
-      const _create = sandbox.stub(credits.storage.models.Marketing, 'create')
-        .callsArgWith(1, null, mockMarketing)
-
-      const _handleReferral = sandbox.spy(credits, 'handleReferralSignup')
-      // const _handleRegular = sandbox.spy(credits, 'handleRegularSignup')
-
-      credits.handleSignups(req, res);
-      // expect(_handleRegular.callCount).to.equal(0);
-      expect(_handleReferral.callCount).to.equal(1);
-      done();
-    });
+  // describe('#handleReferralSignup', () => {
+  //   it('should ping handleReferralSignup', (done) => {
+  //     const mockMarketing = new credits.models.Marketing({
+  //       user: 'dylan@storj.io',
+  //       referralLink: 'abc-123'
+  //     });
+  //
+  //     var req = httpMocks.createRequest({
+  //       method: 'POST',
+  //       url: '/credits/signups',
+  //       body: {
+  //         email: 'dylan@storj.io',
+  //         referralLink: 'abc-123'
+  //       }
+  //     });
+  //
+  //     var res = httpMocks.createResponse({
+  //       eventEmitter: EventEmitter,
+  //       req: req
+  //     });
+  //
+  //     res.on('end', () => {
+  //       console.log('#### RETURN 200 #####', res._getData());
+  //
+  //     })
+  //
+  //     const _create = sandbox.stub(credits.storage.models.Marketing, 'create')
+  //       .callsArgWith(1, null, mockMarketing)
+  //
+  //     const _handleReferral = sandbox.spy(credits, 'handleReferralSignup')
+  //     // const _handleRegular = sandbox.spy(credits, 'handleRegularSignup')
+  //
+  //     credits.handleSignups(req, res);
+  //     // expect(_handleRegular.callCount).to.equal(0);
+  //     expect(_handleReferral.callCount).to.equal(1);
+  //     done();
+  //   });
 
     // it('should ping handleRegularSignup', (done) => {
     //   const mockMarketing = new credits.models.Marketing({
@@ -108,41 +108,41 @@ describe('Credits Router', function() {
     //   done();
     // });
 
-    it('#create should handle errors correctly', (done) => {
-      var req = httpMocks.createRequest({
-        method: 'POST',
-        url: '/credits/signups',
-        body: {
-          email: 'dylan@storj.io',
-          referralLink: 'abc-123'
-        }
-      });
-
-      var res = httpMocks.createResponse({
-        eventEmitter: EventEmitter,
-        req: req
-      });
-
-      res.on('end', () => {
-        const data = res._getData();
-        expect(data).to.be.ok;
-        expect(data).to.be.instanceOf(Error);
-        expect(res.statusCode).to.equal(500);
-        console.log('#### RETURN 500 ERROR #####', res._getData());
-      });
-
-      const _create = sandbox.stub(credits.storage.models.Marketing, 'create')
-        .callsArgWith(1, new Error('Panic!'), null);
-
-      const _handleReferral = sandbox.spy(credits, 'handleReferralSignup');
-      // const _handleRegular = sandbox.spy(credits, 'handleRegularSignup');
-
-      credits.handleSignups(req, res);
-      expect(_handleReferral.callCount).to.equal(0);
-      // expect(_handleRegular.callCount).to.equal(0);
-      done();
-    });
-  });
+  //   it('#create should handle errors correctly', (done) => {
+  //     var req = httpMocks.createRequest({
+  //       method: 'POST',
+  //       url: '/credits/signups',
+  //       body: {
+  //         email: 'dylan@storj.io',
+  //         referralLink: 'abc-123'
+  //       }
+  //     });
+  //
+  //     var res = httpMocks.createResponse({
+  //       eventEmitter: EventEmitter,
+  //       req: req
+  //     });
+  //
+  //     res.on('end', () => {
+  //       const data = res._getData();
+  //       expect(data).to.be.ok;
+  //       expect(data).to.be.instanceOf(Error);
+  //       expect(res.statusCode).to.equal(500);
+  //       console.log('#### RETURN 500 ERROR #####', res._getData());
+  //     });
+  //
+  //     const _create = sandbox.stub(credits.storage.models.Marketing, 'create')
+  //       .callsArgWith(1, new Error('Panic!'), null);
+  //
+  //     const _handleReferral = sandbox.spy(credits, 'handleReferralSignup');
+  //     // const _handleRegular = sandbox.spy(credits, 'handleRegularSignup');
+  //
+  //     credits.handleSignups(req, res);
+  //     expect(_handleReferral.callCount).to.equal(0);
+  //     // expect(_handleRegular.callCount).to.equal(0);
+  //     done();
+  //   });
+  // });
 
   // describe('#handleRegularSignup', () => {
   //   it('should issue regularSignupCredit', (done) => {
