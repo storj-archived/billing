@@ -218,115 +218,115 @@ describe('Credits Router', function() {
   //   });
   // });
 
-  describe('#handleReferralSignup', () => {
-    it('should return 200 and referral', (done) => {
-      var req = httpMocks.createRequest({
-        method: 'POST',
-        url: '/credits/signups',
-        body: {
-          email: 'dylan@storj.io',
-          referralLink: 'abc-123'
-        }
-      });
-
-      var res = httpMocks.createResponse({
-        eventEmitter: EventEmitter,
-        req: req
-      });
-
-      const mockMarketing = new credits.models.Marketing({
-        user: 'dylan@storj.io',
-        referralLink: 'abc-123'
-      });
-
-      const mockReferral = new credits.models.Referral({
-        sender: {
-          referralLink: 'abc-123'
-        },
-        recipient: {
-          amount_to_credit: 1000,
-          email: 'recipient@storj.io'
-        }
-      });
-
-      const mockCredit = new credits.models.Credit({
-        user: 'dylan@storj.io',
-        type: 'manual'
-      });
-
-      const _valid = sandbox.stub(credits.models.Marketing, 'isValidReferralLink')
-        .returnsPromise();
-      _valid.resolves(mockMarketing);
-
-      const _getReferral = sandbox.stub(credits, '_getReferral')
-        .returnsPromise();
-      _getReferral.resolves(mockReferral);
-
-      const _issueReferral = sandbox.stub(credits, '_issueReferralSignupCredit')
-        .returnsPromise();
-      _issueReferral.resolves(mockCredit);
-
-      const _convert = sandbox.stub(credits, '_convertReferralRecipient')
-        .returnsPromise();
-      _convert.resolves(mockReferral);
-
-      res.on('end', () => {
-        console.log('##### HANDLE REFERRAL');
-        expect(res.statusCode).to.equal(200);
-        expect(res.statusMessage).to.equal('OK');
-        const data = res._getData();
-        expect(data.recipient).to.be.an('object');
-        expect(data.sender).to.be.an('object');
-        expect(data.count).to.be.a('number');
-        expect(data.created).to.be.instanceOf(Date);
-        expect(data.id).to.be.a('string');
-        expect(data.recipient.email).to.equal(mockReferral.recipient.email);
-        expect(data.recipient.min_spent_requirement).to.equal(1000);
-        expect(data.sender.referralLink).to.equal(mockReferral.sender.referralLink);
-
-        console.log(data);
-      })
-
-      credits.handleReferralSignup(req, res);
-      expect(_valid.callCount).to.equal(1);
-      expect(_getReferral.callCount).to.equal(1);
-      expect(_issueReferral.callCount).to.equal(1);
-      expect(_convert.callCount).to.equal(1);
-      done();
-    });
-
-    it('should catch errors', (done) => {
-      var req = httpMocks.createRequest({
-        method: 'POST',
-        url: '/credits/signups',
-        body: {
-          email: 'dylan@storj.io',
-          referralLink: 'abc-123'
-        }
-      });
-
-      var res = httpMocks.createResponse({
-        eventEmitter: EventEmitter,
-        req: req
-      });
-
-      const err = new errors.InternalError('Panic!');
-
-      const _valid = sandbox.stub(credits.models.Marketing, 'isValidReferralLink')
-        .returnsPromise();
-      _valid.rejects(err);
-
-      res.on('end', () => {
-        const data = res._getData();
-        expect(data.statusCode).to.equal(500);
-        expect(data.message).to.equal('Panic!');
-        console.log('#### PANIC!!!');
-      });
-
-      credits.handleReferralSignup(req, res);
-      expect(_valid.callCount).to.equal(1);
-      done();
-    });
+  // describe('#handleReferralSignup', () => {
+  //   it('should return 200 and referral', (done) => {
+  //     var req = httpMocks.createRequest({
+  //       method: 'POST',
+  //       url: '/credits/signups',
+  //       body: {
+  //         email: 'dylan@storj.io',
+  //         referralLink: 'abc-123'
+  //       }
+  //     });
+  //
+  //     var res = httpMocks.createResponse({
+  //       eventEmitter: EventEmitter,
+  //       req: req
+  //     });
+  //
+  //     const mockMarketing = new credits.models.Marketing({
+  //       user: 'dylan@storj.io',
+  //       referralLink: 'abc-123'
+  //     });
+  //
+  //     const mockReferral = new credits.models.Referral({
+  //       sender: {
+  //         referralLink: 'abc-123'
+  //       },
+  //       recipient: {
+  //         amount_to_credit: 1000,
+  //         email: 'recipient@storj.io'
+  //       }
+  //     });
+  //
+  //     const mockCredit = new credits.models.Credit({
+  //       user: 'dylan@storj.io',
+  //       type: 'manual'
+  //     });
+  //
+  //     const _valid = sandbox.stub(credits.models.Marketing, 'isValidReferralLink')
+  //       .returnsPromise();
+  //     _valid.resolves(mockMarketing);
+  //
+  //     const _getReferral = sandbox.stub(credits, '_getReferral')
+  //       .returnsPromise();
+  //     _getReferral.resolves(mockReferral);
+  //
+  //     const _issueReferral = sandbox.stub(credits, '_issueReferralSignupCredit')
+  //       .returnsPromise();
+  //     _issueReferral.resolves(mockCredit);
+  //
+  //     const _convert = sandbox.stub(credits, '_convertReferralRecipient')
+  //       .returnsPromise();
+  //     _convert.resolves(mockReferral);
+  //
+  //     res.on('end', () => {
+  //       console.log('##### HANDLE REFERRAL');
+  //       expect(res.statusCode).to.equal(200);
+  //       expect(res.statusMessage).to.equal('OK');
+  //       const data = res._getData();
+  //       expect(data.recipient).to.be.an('object');
+  //       expect(data.sender).to.be.an('object');
+  //       expect(data.count).to.be.a('number');
+  //       expect(data.created).to.be.instanceOf(Date);
+  //       expect(data.id).to.be.a('string');
+  //       expect(data.recipient.email).to.equal(mockReferral.recipient.email);
+  //       expect(data.recipient.min_spent_requirement).to.equal(1000);
+  //       expect(data.sender.referralLink).to.equal(mockReferral.sender.referralLink);
+  //
+  //       console.log(data);
+  //     })
+  //
+  //     credits.handleReferralSignup(req, res);
+  //     expect(_valid.callCount).to.equal(1);
+  //     expect(_getReferral.callCount).to.equal(1);
+  //     expect(_issueReferral.callCount).to.equal(1);
+  //     expect(_convert.callCount).to.equal(1);
+  //     done();
+  //   });
+  //
+  //   it('should catch errors', (done) => {
+  //     var req = httpMocks.createRequest({
+  //       method: 'POST',
+  //       url: '/credits/signups',
+  //       body: {
+  //         email: 'dylan@storj.io',
+  //         referralLink: 'abc-123'
+  //       }
+  //     });
+  //
+  //     var res = httpMocks.createResponse({
+  //       eventEmitter: EventEmitter,
+  //       req: req
+  //     });
+  //
+  //     const err = new errors.InternalError('Panic!');
+  //
+  //     const _valid = sandbox.stub(credits.models.Marketing, 'isValidReferralLink')
+  //       .returnsPromise();
+  //     _valid.rejects(err);
+  //
+  //     res.on('end', () => {
+  //       const data = res._getData();
+  //       expect(data.statusCode).to.equal(500);
+  //       expect(data.message).to.equal('Panic!');
+  //       console.log('#### PANIC!!!');
+  //     });
+  //
+  //     credits.handleReferralSignup(req, res);
+  //     expect(_valid.callCount).to.equal(1);
+  //     done();
+  //   });
 
     // it('should call handleRegular if invalid referral', (done) => {
     //     var req = httpMocks.createRequest({
@@ -358,7 +358,7 @@ describe('Credits Router', function() {
     //     expect(_handleRegular.callCount).to.equal(1);
     //     done();
     // });
-  });
+  // });
 
   // describe('#_issueRegularSignupCredit', () => {
   //     it('should return credit promise', (done) => {
