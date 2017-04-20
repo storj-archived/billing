@@ -4,8 +4,45 @@ const logger = require('../lib/logger');
 logger.debug('HELLO FROM TEST');
 
 const moment = require('moment');
+const program = requre('commander');
+const rl = require('readline');
 const Storage = require('storj-service-storage-models');
 const BillingClient = require('../lib/utils/billing-client');
+
+program
+  .version('0.0.1')
+  .usage('[options]')
+  .option(
+    '-b, --begin [time]',
+    'Begin Time in ISO Date format EX: 2017-03-27 - Default: Today'
+  )
+  .option(
+    '-d, --days <number>',
+    'Number of days to generate debits for starting at Begin Time - Default: 1',
+    parseInt
+  )
+  .option(
+    '-R, --remove',
+    'Remove existing debits within the selected date range before generation'
+  )
+  .parse(process.argv);
+
+const generationBeginDate = moment.utc(program.begin, 'YYYY-MM-DD');
+const generationDays = program.days || 1;
+const generationEndDays = moment.utc(generationBeginDate).add(generationDays, 'day');
+const removeExistingDebits = program.remove || false;
+
+// Confirm with user that date range is as expected before moving on
+logger.info("We will generate debits starting on %s and ending on %s", generationBeginDate, generationEndDate);
+logger.info('WARNING - This will delete all existing bandwidth and storage debits within this date range');
+
+confirm('Do these dates look right? [y/N] ', function(answer) {
+  if (answer != 'Y' && answer != 'y') {
+    logger.info('Ok, exiting now...');
+    return exit(0);
+  }
+});
+
 const DOLLARS_PER_GB_BANDWIDTH = 0.05;
 const DOLLARS_PER_GB_HOUR_STORAGE = .00002054795;
 
@@ -50,9 +87,9 @@ connectedPromise
     countDebits().then(function() {
       let promiseChain = Promise.resolve();
 
-      for (let i = 0; i < 1; i++) {
+      for (let i = 0; i < generationDays; i++) {
         promiseChain = promiseChain.then(() => {
-          const endTimestamp = moment.utc().subtract(1, 'day').add(i, 'day').valueOf();
+          const endTimestamp = generationBeginDate.add(i, 'day').valueOf();
           const beginTimestamp = moment.utc(endTimestamp).subtract(1, 'day').valueOf();
           const timestampRange = `timestamp range: ${moment.utc(beginTimestamp)
             .format('MM-DD-YYYY')}-${moment.utc(endTimestamp)
@@ -88,6 +125,16 @@ connectedPromise
 function countDebits() {
   return storage.models.Debit.count()
     .then(count => logger.debug(count));
+}
+
+function confirm(question, callback) {
+  var r = rl.createInterface({
+    input: process.stdin,
+    output: process.stdout});
+  r.question(question, function(answer) {
+    r.close();
+    callback(null, answer);
+  });
 }
 
 // function deleteDebits() {
