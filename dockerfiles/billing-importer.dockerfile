@@ -14,5 +14,6 @@ COPY ./lib/logger.js /root/lib/logger.js
 COPY ./lib/config.js /root/lib/config.js
 ENV BILLING_URL http://billing
 RUN chmod +x /root/bin/billing-queries.js
+RUN chmod +x /root/bin/create-debits.js
 
 CMD npm run start-importer

@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 const logger = require('../lib/logger');
 
-logger.debug('HELLO FROM TEST');
-
 const moment = require('moment');
-const program = requre('commander');
+const program = require('commander');
 const rl = require('readline');
 const Storage = require('storj-service-storage-models');
 const BillingClient = require('../lib/utils/billing-client');
@@ -29,17 +27,22 @@ program
 
 const generationBeginDate = moment.utc(program.begin, 'YYYY-MM-DD');
 const generationDays = program.days || 1;
-const generationEndDays = moment.utc(generationBeginDate).add(generationDays, 'day');
+const generationEndDate = moment.utc(generationBeginDate).add(generationDays, 'day');
 const removeExistingDebits = program.remove || false;
 
 // Confirm with user that date range is as expected before moving on
-logger.info("We will generate debits starting on %s and ending on %s", generationBeginDate, generationEndDate);
-logger.info('WARNING - This will delete all existing bandwidth and storage debits within this date range');
+console.log("We will generate debits starting on %s and ending on %s", generationBeginDate, generationEndDate);
+if (program.remove) {
+  console.log('WARNING - This will delete all existing bandwidth and storage debits within this date range');
+}
 
 confirm('Do these dates look right? [y/N] ', function(answer) {
-  if (answer != 'Y' && answer != 'y') {
+  console.log('Answer is: ', answer);
+  if (answer === 'Y' || answer === 'y') {
+    start();
+  } else {
     logger.info('Ok, exiting now...');
-    return exit(0);
+    return process.exit(0);
   }
 });
 
@@ -66,63 +69,65 @@ const BILLING_URL = process.env.BILLING_URL || 'http://localhost:3000';
 const PRIVKEY = process.env.PRIVKEY ||
   'd6b0e5ac88be1f9c3749548de7b6148f14c2ca8ccdf5295369476567e8c8d218';
 
-const billingClient = new BillingClient(BILLING_URL, PRIVKEY);
-const storage = new Storage(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/bridge', mongoOptions);
-const generateDebits = require('../lib/queries/generate-debits')(storage, billingClient);
-const connectedPromise = new Promise((resolve, reject) => {
-  storage.connection.on('connected', resolve);
-  storage.connection.on('error', reject);
-});
 
-module.exports = storage;
-
-connectedPromise
-  .then(countDebits)
-  // .then(deleteDebits)
-  .then(function() {
-    logger.debug('connected!');
-    // const bandwidthDebitsPromises = [];
-    // const storageDebitsPromises = [];
-
-    countDebits().then(function() {
-      let promiseChain = Promise.resolve();
-
-      for (let i = 0; i < generationDays; i++) {
-        promiseChain = promiseChain.then(() => {
-          const endTimestamp = generationBeginDate.add(i, 'day').valueOf();
-          const beginTimestamp = moment.utc(endTimestamp).subtract(1, 'day').valueOf();
-          const timestampRange = `timestamp range: ${moment.utc(beginTimestamp)
-            .format('MM-DD-YYYY')}-${moment.utc(endTimestamp)
-            .format('MM-DD-YYYY')}`;
-          logger.debug(timestampRange);
-
-          // logger.debug('starting...');
-          // bandwidthDebitsPromises.push(generateDebits
-          logger.debug('starting...');
-          const bandwidthDebitPromise = generateDebits
-            .forBandwidth(beginTimestamp, endTimestamp, DOLLARS_PER_GB_BANDWIDTH)
-            .then(() => logger.debug(`... ${timestampRange} forBandwidth done!`));
-          const storageDebitPromise = generateDebits
-            .forStorage(beginTimestamp, endTimestamp, DOLLARS_PER_GB_HOUR_STORAGE)
-            .then(() => logger.debug(`... ${timestampRange} forStorage done!`));
-
-          logger.debug(`Kicking off debit calculation for ${timestampRange}`);
-          return Promise.all([bandwidthDebitPromise, storageDebitPromise])
-            .then(() => logger.debug("Done with bandwidthDebitPromise and storageDebitPromise"));
-        })
-      }
-
-      return promiseChain
-        .then(countDebits)
-        .then(() => process.exit(0));
-    })
-  })
-  .catch(function(err) {
-    logger.error(err);
-    process.exit(1);
+var start = function() {
+  const billingClient = new BillingClient(BILLING_URL, PRIVKEY);
+  const storage = new Storage(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/bridge', mongoOptions);
+  const generateDebits = require('../lib/queries/generate-debits')(storage, billingClient);
+  const connectedPromise = new Promise((resolve, reject) => {
+    storage.connection.on('connected', resolve);
+    storage.connection.on('error', reject);
   });
 
-function countDebits() {
+
+  connectedPromise
+    .then(countDebits(storage))
+    // .then(deleteDebits)
+    .then(function() {
+      logger.debug('connected!');
+      // const bandwidthDebitsPromises = [];
+      // const storageDebitsPromises = [];
+
+      countDebits(storage).then(function() {
+        let promiseChain = Promise.resolve();
+
+        for (let i = 0; i < generationDays; i++) {
+          promiseChain = promiseChain.then(() => {
+            const endTimestamp = generationBeginDate.add(i, 'day').valueOf();
+            const beginTimestamp = moment.utc(endTimestamp).subtract(1, 'day').valueOf();
+            const timestampRange = `timestamp range: ${moment.utc(beginTimestamp)
+              .format('MM-DD-YYYY')}-${moment.utc(endTimestamp)
+              .format('MM-DD-YYYY')}`;
+            logger.debug(timestampRange);
+
+            // logger.debug('starting...');
+            // bandwidthDebitsPromises.push(generateDebits
+            logger.debug('starting...');
+            const bandwidthDebitPromise = generateDebits
+              .forBandwidth(beginTimestamp, endTimestamp, DOLLARS_PER_GB_BANDWIDTH)
+              .then(() => logger.debug(`... ${timestampRange} forBandwidth done!`));
+            const storageDebitPromise = generateDebits
+              .forStorage(beginTimestamp, endTimestamp, DOLLARS_PER_GB_HOUR_STORAGE)
+              .then(() => logger.debug(`... ${timestampRange} forStorage done!`));
+
+            logger.debug(`Kicking off debit calculation for ${timestampRange}`);
+            return Promise.all([bandwidthDebitPromise, storageDebitPromise])
+              .then(() => logger.debug("Done with bandwidthDebitPromise and storageDebitPromise"));
+          })
+        }
+
+        return promiseChain
+          .then(countDebits(storage))
+          .then(() => process.exit(0));
+      })
+    })
+    .catch(function(err) {
+      logger.error(err);
+      process.exit(1);
+    });
+};
+
+function countDebits(storage) {
   return storage.models.Debit.count()
     .then(count => logger.debug(count));
 }
@@ -133,7 +138,7 @@ function confirm(question, callback) {
     output: process.stdout});
   r.question(question, function(answer) {
     r.close();
-    callback(null, answer);
+    callback(answer);
   });
 }
 
