@@ -7,29 +7,30 @@ RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/
 # wait.sh forces our app to wait for other containers to come up before starting
 # Should pull this into the repo to cache it or use the included wait scritp that comes with newer docker
 # We shouldn't have to do this at all however. Our services should wait for other services until they are alive.
-RUN wget -O /bin/wait.sh https://raw.githubusercontent.com/Storj/storj-sdk/master/scripts/wait.sh
+RUN wget -O /usr/local/bin/wait.sh https://raw.githubusercontent.com/Storj/storj-sdk/master/scripts/wait.sh
 
 EXPOSE 3000
 
-RUN mkdir /billing
-WORKDIR /billing
+RUN mkdir /opt/billing
+# Map `/opt/app` to this services project root
+RUN ln -s /opt/billing /opt/app
+WORKDIR /opt/billing
 
 RUN yarn global add nodemon
 
-COPY ./package.json /billing/package.json
+COPY ./package.json /opt/billing/package.json
 RUN yarn install --ignore-engines
 
-COPY ./bin /billing/bin
-COPY ./lib /billing/lib
-COPY ./index.js /billing/index.js
-COPY ./test /billing/test
+COPY ./bin /opt/billing/bin
+COPY ./lib /opt/billing/lib
+COPY ./index.js /opt/billing/index.js
+COPY ./test /opt/billing/test
 
-## Add setup script which takes care of vendored modules
-#ADD ./setup.sh /bin/setup.sh
-#
-## Pass everything through dumb-init and wait.sh first, making sure our process handles the responsibilities of PID 1 and waits for services it depends on to start before coming up.
-#ENTRYPOINT ["dumb-init", "--"]
-#
-## The default command this container will run is the bridge, but the user can pass in their own commands which get handled by wait.sh and dumb-init.
-#CMD ["/bin/bash", "/bin/wait.sh", "/bin/setup.sh", "npm run start-dev"]
-CMD npm run start-dev
+# Add setup script which takes care of vendored modules
+ADD ./setup.sh /usr/local/bin/setup.sh
+
+# Pass everything through dumb-init and wait.sh first, making sure our process handles the responsibilities of PID 1 and waits for services it depends on to start before coming up.
+ENTRYPOINT ["dumb-init", "--"]
+
+# The default command this container will run is the billing server, but the user can pass in their own commands which get handled by wait.sh and dumb-init.
+CMD ["/bin/bash", "/usr/local/bin/wait.sh", "/usr/local/bin/setup.sh", "npm run start-dev"]
