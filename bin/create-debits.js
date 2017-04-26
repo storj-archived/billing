@@ -21,9 +21,14 @@ program
   )
   .option(
     '-R, --remove',
-    'Remove existing debits within the selected date range before generation'
+    'Remove existing debits within the selected date range before generation (not yet implemented)'
   )
   .parse(process.argv);
+
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
+  process.exit(1);
+}
 
 const generationBeginDate = moment.utc(program.begin, 'YYYY-MM-DD');
 const generationDays = program.days || 1;
