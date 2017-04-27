@@ -34,7 +34,8 @@ if (!process.argv.slice(2).length) {
   process.exit(1);
 }
 
-const generationBeginDate = moment.utc(program.begin, 'YYYY-MM-DD');
+// NB: if no `[time]` passed (e.g. `./create-debits.js -b`), `program.begin` will be `true`.
+const generationBeginDate = (program.begin == true) ? moment.utc() : moment.utc(program.begin, 'YYYY-MM-DD');
 const generationDays = program.days || 1;
 const generationEndDate = moment.utc(generationBeginDate).add(generationDays, 'day');
 const removeExistingDebits = program.remove || false;
