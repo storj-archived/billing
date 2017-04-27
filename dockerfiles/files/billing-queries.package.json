@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "storj-service-storage-models": "^8.16.1",
+    "commander": "^2.9.0",
     "cron": "^1.1.1",
     "axios": "^0.15.3",
     "kad-logger-json": "^0.1.2"
