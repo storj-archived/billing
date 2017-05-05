@@ -6,6 +6,8 @@ const program = require('commander');
 const rl = require('readline');
 const Storage = require('storj-service-storage-models');
 const BillingClient = require('../lib/utils/billing-client');
+const CENTS_PER_GB_BANDWIDTH = 5.0;
+const CENTS_PER_GB_HOUR_STORAGE = 0.002054795;
 
 program
   .version('0.0.1')
@@ -34,7 +36,8 @@ if (!process.argv.slice(2).length) {
   process.exit(1);
 }
 
-const generationBeginDate = moment.utc(program.begin, 'YYYY-MM-DD');
+// NB: if no `[time]` passed (e.g. `./create-debits.js -b`), `program.begin` will be `true`.
+const generationBeginDate = (program.begin == true) ? moment.utc() : moment.utc(program.begin, 'YYYY-MM-DD');
 const generationDays = program.days || 1;
 const generationEndDate = moment.utc(generationBeginDate).add(generationDays, 'day');
 const removeExistingDebits = program.remove || false;
@@ -108,10 +111,10 @@ function start() {
             logger.debug("Starting to create debits for date range %s", timestampRange);
 
             const bandwidthDebitPromise = generateDebits
-              .forBandwidth(beginTimestamp, endTimestamp, DOLLARS_PER_GB_BANDWIDTH)
+              .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH)
               .then(() => logger.debug(`... ${timestampRange} forBandwidth done!`));
             const storageDebitPromise = generateDebits
-              .forStorage(beginTimestamp, endTimestamp, DOLLARS_PER_GB_HOUR_STORAGE)
+              .forStorage(beginTimestamp, endTimestamp, CENTS_PER_GB_HOUR_STORAGE)
               .then(() => logger.debug(`... ${timestampRange} forStorage done!`));
 
             logger.debug(`Kicking off debit calculation for ${timestampRange}`);
@@ -170,5 +173,3 @@ if (!program.yes) {
 } else {
   start();
 }
-
-const DOLLARS_PER_GB_BANDWIDTH = 0.05;
