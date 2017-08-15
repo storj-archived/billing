@@ -1,3 +1,4 @@
+#!/bin/bash
 cd /opt/app
 
 for dir in /usr/src/vendor/* ; do
