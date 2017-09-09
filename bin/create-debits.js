@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const logger = require('../lib/logger');
 
+const mailer = requrie('storj-service-mailer');
 const moment = require('moment');
 const program = require('commander');
 const rl = require('readline');
@@ -63,7 +64,6 @@ const BILLING_URL = process.env.BILLING_URL || 'http://localhost:3000';
 // matching pubkey: '02439658e54579d120b0fd24d323e413d028704f845b8f7ab5b11e91d6cd5dbb00';
 const PRIVKEY = process.env.PRIVKEY ||
   'd6b0e5ac88be1f9c3749548de7b6148f14c2ca8ccdf5295369476567e8c8d218';
-
 
 function start() {
   const billingClient = new BillingClient(BILLING_URL, PRIVKEY);
@@ -153,6 +153,21 @@ function confirm(question, callback) {
 //   logger.debug('DELETING DEBITS COLLECTION');
 //   return storage.models.Debit.remove({});
 // }
+
+function sendInvoice (user, amount, storage, bandwidth) {
+  const self = this;
+  const user = '';
+
+  mailer.dispatch(user, 'invoice', {
+    amount: amount,
+    storage: storage,
+    bandwidth: bandwidth
+  }, function (err) {
+    if (err) {
+      logger.('Error sending user invoice: ', err);
+    }
+  });
+}
 
 // Confirm with user that date range is as expected before moving on
 console.log("We will generate debits starting on %s and ending on %s", generationBeginDate, generationEndDate);
