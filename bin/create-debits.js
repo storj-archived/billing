@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 const logger = require('../lib/logger');
-
-const mailer = requrie('storj-service-mailer');
+const StorjMailer = require('storj-service-mailer');
+const defaults = require('../config.js').DEFAULTS;
+const mailer = new StorjMailer(defaults.mailer);
 const moment = require('moment');
 const program = require('commander');
 const rl = require('readline');
@@ -156,7 +157,6 @@ function confirm(question, callback) {
 
 function sendInvoice (user, amount, storage, bandwidth) {
   const self = this;
-  const user = '';
 
   mailer.dispatch(user, 'invoice', {
     amount: amount,
