@@ -32,7 +32,45 @@ describe('PaymentProcessors Router', () => {
     it('smoke test', (done) => {
       expect(PaymentProc.config).to.be.instanceOf(Config);
       expect(PaymentProc).to.be.instanceOf(PaymentProcessorsRouter);
+      expect(PaymentProc.models).to.be.ok;
       done();
     });
   });
+
+  describe('#_addPaymentProcessor', () => {
+
+  });
+
+  describe('#_setUserFreeTier', () => {
+
+  });
+
+  describe('#addPaymentMethod', () => {
+
+  });
+
+  describe('#handleCreateAddress', () => {
+
+  });
+
+  describe('#getWallets', () => {
+
+  });
+
+  describe('#removePaymentMethod', () => {
+
+  });
+
+  describe('#getDefaultPP', () => {
+
+  });
+
+  describe('#handleIPN', () => {
+
+  });
+
+  describe('#_createCoinPaymentsCredit', () => {
+
+  });
+
 });
