@@ -1,14 +1,13 @@
 const sinon = require('sinon');
 const stubPromise = require('sinon-stub-promise');
+stubPromise(sinon);
 const chai = require('chai');
 const expect = chai.expect;
 const assert = chai.assert;
 const Promise = require('bluebird');
-
-
-stubPromise(sinon);
-
+const EventEmitter = require('events').EventEmitter;
 const PaymentProcessorsRouter = require('../../../lib/server/routes/payment-processors');
+const httpMocks = require('node-mocks-http');
 const errors = require('storj-service-error-types');
 const routerOpts = require('../../_fixtures/router-opts');
 const constants = require('../../../lib/constants');
@@ -38,7 +37,51 @@ describe('PaymentProcessors Router', () => {
   });
 
   describe('#_addPaymentProcessor', () => {
+    it('should ping addPaymentProcessor', (done) => {
+      const req = httpMocks.createRequest({
+        method: 'POST',
+        url: '/pp/method/add',
+        body: {
+          processor: {
+            name: 'stripe',
+            default: true
+          },
+          data: {
+            token: '1234'
+          }
+        }
+      });
+      req.user = 'dylan@storj.io';
 
+      const res = httpMocks.createResponse({
+        eventEmitter: EventEmitter,
+        req: req
+      });
+
+      res.on('end', (data) => {
+        console.log('#### DATA: ', res._getData());
+        console.log('#### add payment processor #### ');
+        done();
+      });
+
+      //const mockProcessor = new PaymentProc.models.PaymentProcessor({
+      //  user: 'dylan@storj.io',
+      //  name: 'stripe',
+      //  rawData: [],
+      //  default: true
+      //});
+
+      //const _register = sandbox
+      //  .stub(PaymentProc.models.PaymentProcessor.adapter, 'register')
+      //  .returnsPromise();
+
+      //_register.resolves(mockProcessor);
+      // add spies
+      const _addPaymentProc = sandbox.spy(PaymentProc, '_addPaymentProcessor');
+
+      // call the method
+      PaymentProc._addPaymentProcessor(req, res);
+    });
   });
 
   describe('#_setUserFreeTier', () => {
