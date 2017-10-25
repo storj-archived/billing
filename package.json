@@ -15,9 +15,10 @@
     "testsuite": "STORJ_ALLOW_LOOPBACK=1 NODE_ENV=test ./node_modules/.bin/_mocha --recursive test/**",
     "coverage": "STORJ_ALLOW_LOOPBACK=1 NODE_ENV=test ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --recursive",
     "linter": "./node_modules/.bin/eslint ./index.js ./lib ./test",
-    "dev": "NODE_ENV=development nodemon ./bin/storj-billing.js",
-    "start-prod": "NODE_ENV=production node ./bin/storj-billing.js",
-    "test": "npm run linter && npm run testsuite"
+    "start": "if [[ ${NODE_ENV} == \"development\" ]]; then npm run start:dev; else npm run start:prod; fi",
+    "start:dev": "NODE_ENV=development nodemon ./bin/storj-billing.js",
+    "start:prod": "NODE_ENV=production node ./bin/storj-billing.js",
+    "test": "npm run testsuite"
   },
   "repository": {
     "type": "git",
@@ -67,7 +68,7 @@
     "sinon-as-promised": "^4.0.3",
     "sinon-bluebird": "^3.1.0",
     "sinon-stub-promise": "^4.0.0",
-    "storj-complex": "^5.1.0",
+    "storj-complex": "^7.4.1",
     "supertest": "^3.0.0"
   },
   "dependencies": {
@@ -97,12 +98,12 @@
     "nodemailer": "^2.0.0",
     "readable-stream": "^2.0.5",
     "readline": "^1.3.0",
-    "storj-lib": "^6.3.2",
-    "storj-mongodb-adapter": "^7.0.0",
-    "storj-service-error-types": "^1.0.0",
-    "storj-service-mailer": "^1.0.0",
-    "storj-service-middleware": "^1.0.0",
-    "storj-service-storage-models": "^8.9.0",
+    "storj-lib": "^8.3.0",
+    "storj-mongodb-adapter": "^9.0.0",
+    "storj-service-error-types": "^1.2.0",
+    "storj-service-mailer": "^1.2.4",
+    "storj-service-middleware": "^1.3.2",
+    "storj-service-storage-models": "^10.2.2",
     "stripe": "^4.11.0",
     "through": "^2.3.8"
   }
