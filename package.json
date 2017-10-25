@@ -15,8 +15,9 @@
     "testsuite": "STORJ_ALLOW_LOOPBACK=1 NODE_ENV=test ./node_modules/.bin/_mocha --recursive test/**",
     "coverage": "STORJ_ALLOW_LOOPBACK=1 NODE_ENV=test ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --recursive",
     "linter": "./node_modules/.bin/eslint ./index.js ./lib ./test",
-    "start-dev": "NODE_ENV=development nodemon ./bin/storj-billing.js",
-    "start-prod": "NODE_ENV=production node ./bin/storj-billing.js",
+    "start": "if [[ ${NODE_ENV} == \"development\" ]]; then npm run start:dev; else npm run start:prod; fi",
+    "start:dev": "NODE_ENV=development nodemon ./bin/storj-billing.js",
+    "start:prod": "NODE_ENV=production node ./bin/storj-billing.js",
     "test": "npm run testsuite"
   },
   "repository": {
