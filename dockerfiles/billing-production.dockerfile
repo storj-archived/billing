@@ -32,4 +32,4 @@ RUN yarn --ignore-engines
 #
 ## The default command this container will run is the bridge, but the user can pass in their own commands which get handled by wait.sh and dumb-init.
 #CMD ["/bin/bash", "/bin/wait.sh", "/bin/setup.sh", "npm run start-prod"]
-CMD npm run start-prod
+CMD npm start

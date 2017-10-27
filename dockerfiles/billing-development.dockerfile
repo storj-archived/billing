@@ -33,4 +33,4 @@ ADD ./setup.sh /usr/local/bin/setup.sh
 ENTRYPOINT ["dumb-init", "--"]
 
 # The default command this container will run is the billing server, but the user can pass in their own commands which get handled by wait.sh and dumb-init.
-CMD ["/bin/bash", "/usr/local/bin/wait.sh", "/usr/local/bin/setup.sh", "npm run start-dev"]
+CMD ["/bin/bash", "/usr/local/bin/wait.sh", "/usr/local/bin/setup.sh", "npm run start:dev"]
