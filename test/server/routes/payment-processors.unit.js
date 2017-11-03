@@ -40,10 +40,10 @@ describe('PaymentProcessors Router', () => {
     it('should ping addPaymentProcessor', (done) => {
       const req = httpMocks.createRequest({
         method: 'POST',
-        url: '/pp/method/add',
+        url: '/pp/wallets',
         body: {
           processor: {
-            name: 'stripe',
+            name: constants.PAYMENT_PROCESSORS.COINPAYMENTS,
             default: true
           },
           data: {
@@ -51,6 +51,7 @@ describe('PaymentProcessors Router', () => {
           }
         }
       });
+
       req.user = 'dylan@storj.io';
 
       const res = httpMocks.createResponse({
@@ -64,20 +65,20 @@ describe('PaymentProcessors Router', () => {
         done();
       });
 
-      //const mockProcessor = new PaymentProc.models.PaymentProcessor({
-      //  user: 'dylan@storj.io',
-      //  name: 'stripe',
-      //  rawData: [],
-      //  default: true
-      //});
+      const mockProcessor = new PaymentProc.models.PaymentProcessor({
+        user: 'dylan@storj.io',
+        name: constants.PAYMENT_PROCESSORS.COINPAYMENTS,
+        rawData: [],
+        default: true
+      });
 
-      //const _register = sandbox
-      //  .stub(PaymentProc.models.PaymentProcessor.adapter, 'register')
-      //  .returnsPromise();
+      console.log('adapter: ', PaymentProc);
 
-      //_register.resolves(mockProcessor);
-      // add spies
-      const _addPaymentProc = sandbox.spy(PaymentProc, '_addPaymentProcessor');
+      const _register = sandbox
+        .returnsPromise();
+
+      _register.resolves(mockProcessor);
+       const _addPaymentProc = sandbox.spy(PaymentProc, '_addPaymentProcessor');
 
       // call the method
       PaymentProc._addPaymentProcessor(req, res);
