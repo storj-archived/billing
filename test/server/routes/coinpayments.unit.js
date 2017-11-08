@@ -108,5 +108,31 @@ describe('#coinpayments IPN router', function() {
 
       coinpayments.handleIPN(request, response);
     });
+
+    it('should update credit if one is found', function (done) {
+      sandbox.restore();
+
+      const request = httpMocks.createRequest({
+        method: 'POST',
+        url: '/coinpayments'
+      });
+
+      request.body = mockBody({
+        status: 0,
+        currency: 'STORJ'
+      });
+
+      const response = httpMocks.createResponse({
+        req: request,
+        eventEmitter: EventEmitter
+      });
+
+      response.on('end', function () {
+        const data = response._getData();
+        console.log('got data: ', data);
+        expect(response.statusCode).to.be.ok;
+        done();
+      });
+    });
   });
 });
