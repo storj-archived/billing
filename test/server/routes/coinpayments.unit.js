@@ -109,16 +109,16 @@ describe('#coinpayments IPN router', function() {
       coinpayments.handleIPN(request, response);
     });
 
-    it('should update credit if one is found', function (done) {
+    it('should create credit if one is not found', function (done) {
       sandbox.restore();
-
+      const mockBody = require('../../_fixtures/coinpayments_req');
       const request = httpMocks.createRequest({
         method: 'POST',
         url: '/coinpayments'
       });
 
       request.body = mockBody({
-        status: 0,
+        status: 100,
         currency: 'STORJ'
       });
 
@@ -127,12 +127,41 @@ describe('#coinpayments IPN router', function() {
         eventEmitter: EventEmitter
       });
 
+      const mockPaymentProcessor = new coinpayments.storage.models.PaymentProcessor({
+        name: 'COINPAYMENTS',
+        user: 'dylan@storj.io',
+        default: true,
+        rawData: [{ address: '1234' }],
+        created: Date.now()
+      })
+
+      const _findOne = sandbox
+        .stub(coinpayments.storage.models.PaymentProcessor, 'findOne')
+        .returnsPromise();
+
+      _findOne.resolves(mockPaymentProcessor);
+
+      const _findOneCredit = sandbox
+        .stub(coinpayments.storage.models.Credit, 'findOne')
+        .returnsPromise();
+
+      _findOneCredit.resolves();
+
+      const _create = sandbox
+        .stub(coinpayments.storage.models.Credit, 'create')
+
+      const _credit = sandbox
+        .stub(coinpayments.storage.models.Credit.prototype, 'save')
+        .returnsPromise()
+
       response.on('end', function () {
         const data = response._getData();
-        console.log('got data: ', data);
-        expect(response.statusCode).to.be.ok;
+        console.log('data: ', data);
+        expect(response.statusCode).to.equal(201);
         done();
       });
+
+      coinpayments.handleIPN(request, response);
     });
   });
 });
