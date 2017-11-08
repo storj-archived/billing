@@ -36,85 +36,85 @@ describe('PaymentProcessors Router', () => {
     });
   });
 
-  describe('#_addPaymentProcessor', () => {
-    it('should ping addPaymentProcessor', (done) => {
-      const req = httpMocks.createRequest({
-        method: 'POST',
-        url: '/pp/wallets',
-        body: {
-          processor: {
-            name: constants.PAYMENT_PROCESSORS.COINPAYMENTS,
-            default: true
-          },
-          data: {
-            token: '1234'
-          }
-        }
-      });
+  // describe('#_addPaymentProcessor', () => {
+  //   it('should ping addPaymentProcessor', (done) => {
+  //     const req = httpMocks.createRequest({
+  //       method: 'POST',
+  //       url: '/pp/wallets',
+  //       body: {
+  //         processor: {
+  //           name: constants.PAYMENT_PROCESSORS.COINPAYMENTS,
+  //           default: true
+  //         },
+  //         data: {
+  //           token: '1234'
+  //         }
+  //       }
+  //     });
 
-      req.user = 'dylan@storj.io';
+  //     req.user = 'dylan@storj.io';
 
-      const res = httpMocks.createResponse({
-        eventEmitter: EventEmitter,
-        req: req
-      });
+  //     const res = httpMocks.createResponse({
+  //       eventEmitter: EventEmitter,
+  //       req: req
+  //     });
 
-      res.on('end', (data) => {
-        console.log('#### DATA: ', res._getData());
-        console.log('#### add payment processor #### ');
-        done();
-      });
+  //     res.on('end', (data) => {
+  //       // console.log('#### DATA: ', res._getData());
+  //       // console.log('#### add payment processor #### ');
+  //       done();
+  //     });
 
-      const mockProcessor = new PaymentProc.models.PaymentProcessor({
-        user: 'dylan@storj.io',
-        name: constants.PAYMENT_PROCESSORS.COINPAYMENTS,
-        rawData: [],
-        default: true
-      });
+  //     const mockProcessor = new PaymentProc.models.PaymentProcessor({
+  //       user: 'dylan@storj.io',
+  //       name: constants.PAYMENT_PROCESSORS.COINPAYMENTS,
+  //       rawData: [],
+  //       default: true
+  //     });
 
-      console.log('adapter: ', PaymentProc);
+  //   // console.log('adapter: ', PaymentProc);
 
-      const _register = sandbox
-        .returnsPromise();
+  //     const _register = sandbox
+  //       .returnsPromise();
 
-      _register.resolves(mockProcessor);
-       const _addPaymentProc = sandbox.spy(PaymentProc, '_addPaymentProcessor');
+  //     _register.resolves(mockProcessor);
+  //      const _addPaymentProc = sandbox.spy(PaymentProc, '_addPaymentProcessor');
 
-      // call the method
-      PaymentProc._addPaymentProcessor(req, res);
-    });
-  });
+  //     // call the method
+  //     PaymentProc._addPaymentProcessor(req, res);
+  //   });
+  // });
 
-  describe('#_setUserFreeTier', () => {
+  // describe('#_setUserFreeTier', () => {
 
-  });
+  // });
 
-  describe('#addPaymentMethod', () => {
+  // describe('#addPaymentMethod', () => {
 
-  });
+  // });
 
-  describe('#handleCreateAddress', () => {
+  // describe('#handleCreateAddress', () => {
 
-  });
+  // });
 
-  describe('#getWallets', () => {
+  // describe('#getWallets', () => {
 
-  });
+  // });
 
-  describe('#removePaymentMethod', () => {
+  // describe('#removePaymentMethod', () => {
 
-  });
+  // });
 
-  describe('#getDefaultPP', () => {
+  // describe('#getDefaultPP', () => {
 
-  });
+  // });
 
-  describe('#handleIPN', () => {
+  // describe('#handleIPN', () => {
 
-  });
+  // });
 
-  describe('#_createCoinPaymentsCredit', () => {
+  // describe('#_createCoinPaymentsCredit', () => {
 
-  });
+  // });
 
 });
