@@ -85,7 +85,7 @@
     "graphql": "^0.7.2",
     "handlebars": "^4.0.5",
     "hat": "0.0.3",
-    "helmet": "^3.8.1",
+    "helmet": "^3.9.0",
     "kad-logger-json": "^0.1.2",
     "knuth-shuffle": "^1.0.1",
     "lodash": "^4.16.4",
