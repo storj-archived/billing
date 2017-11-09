@@ -6,9 +6,10 @@ var sinon = require('sinon');
 
 require('mongoose-currency').loadType(mongoose);
 require('mongoose-types').loadTypes(mongoose);
+
 sinon.stub(mongoose, 'createConnection').returns(
   new mongoose.Connection(new mongoose.Mongoose())
-);
+)
 
 const Config = require('../../lib/config');
 const Storage = proxyquire('storj-service-storage-models', {

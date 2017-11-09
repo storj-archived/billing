@@ -64,7 +64,5 @@ describe('#referralsRouter', function() {
       expect(_dispatch.callCount).to.equal(1);
       done();
     });
-
   });
-
 });
