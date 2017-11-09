@@ -111,6 +111,30 @@ describe('#coinpayments IPN router', function() {
 
     it('should create credit if one is not found', function (done) {
       sandbox.restore();
+
+      // const testRouter = new CoinpaymentsRouter(
+      //   require('../../_fixtures/router-opts')
+      // )
+
+      // function Credit (options) {
+      //   expect(options).to.eql({
+      //     paid: false,
+      //     invoiced_amount: 100,
+      //     paid_amount: 0,
+      //     type: 'automatic',
+      //     user: testUser,
+      //     payment_processor: 'COINPAYMENTS'
+      //   })
+      // }
+
+      // testRouter.storage = {
+      //   models: {
+      //     Credit: Credit
+      //   }
+      // }
+
+      // Credit.prototype.save = sandbox.stub().callsArgWith(0, null);
+
       const mockBody = require('../../_fixtures/coinpayments_req');
       const request = httpMocks.createRequest({
         method: 'POST',
@@ -133,7 +157,7 @@ describe('#coinpayments IPN router', function() {
         default: true,
         rawData: [{ address: '1234' }],
         created: Date.now()
-      })
+      });
 
       const _findOne = sandbox
         .stub(coinpayments.storage.models.PaymentProcessor, 'findOne')
@@ -147,12 +171,8 @@ describe('#coinpayments IPN router', function() {
 
       _findOneCredit.resolves();
 
-      const _create = sandbox
-        .stub(coinpayments.storage.models.Credit, 'create')
-
       const _credit = sandbox
-        .stub(coinpayments.storage.models.Credit.prototype, 'save')
-        .returnsPromise()
+        .stub(coinpayments.storage.models, 'Credit')
 
       response.on('end', function () {
         const data = response._getData();
