@@ -31,8 +31,12 @@ const PRIVKEY = process.env.PRIVKEY ||
 
 const billingClient = new BillingClient(BILLING_URL, PRIVKEY);
 const storage = new Storage(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/__storj-billing-development', mongoOptions);
-const generateDebits = require('../lib/queries/generate-debits')(storage, billingClient);
-const generateReferralCredits = require('../lib/queries/generate-referral-credits')(storage, billingClient);
+
+// const generateDebits = require('../lib/queries/generate-debits')(storage, billingClient);
+// const generateReferralCredits = require('../lib/queries/generate-referral-credits')(storage, billingClient);
+
+const sendInvoices = require('../lib/queries/send-invoices')(storage, billingClient);
+
 const connectedPromise = new Promise((resolve, reject) => {
   storage.connection.on('connected', resolve);
   storage.connection.on('error', reject);
@@ -42,7 +46,7 @@ connectedPromise
     .then(function() {
       const CronJob = require('cron').CronJob;
       const job = new CronJob({
-        cronTime: '',
+        cronTime: '0 0 1 * *',
         onTick: function() {
           logger.info('tick');
         },
