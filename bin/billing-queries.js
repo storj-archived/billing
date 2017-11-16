@@ -42,7 +42,7 @@ connectedPromise
     .then(function() {
       const CronJob = require('cron').CronJob;
       const job = new CronJob({
-        cronTime: '0 0 0 * * *',
+        cronTime: '0 0 0 * * *',// on the first of the month
         onTick: function() {
           logger.debug('connected!');
           const now = moment().utc();
@@ -52,8 +52,12 @@ connectedPromise
           ).valueOf();
           const beginTimestamp = moment.utc(endTimestamp).subtract(1, 'day').valueOf();
           logger.debug(`timestamp range: ${beginTimestamp}-${endTimestamp}`);
+          // go get credits and debits
 
-          // logger.debug('starting...');
+          // sum together
+
+          // take difference and send in invoice
+
           const bandwidthDebitsPromise = generateDebits
               .forBandwidth(beginTimestamp, endTimestamp, CENTS_PER_GB_BANDWIDTH)
               .then(() => logger.debug('... forBandwidth done!'));

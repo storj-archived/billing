@@ -8,7 +8,7 @@ const Storage = require('storj-service-storage-models');
 const BillingClient = require('../lib/utils/billing-client');
 const CENTS_PER_GB_BANDWIDTH = 5.0;
 const CENTS_PER_GB_HOUR_STORAGE = 0.002054795;
-
+const Config = require('../config');
 const MONGO_USERNAME = process.env.MONGO_USERNAME && process.env.MONGO_USERNAME.match(/\S+/)[0];
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD && process.env.MONGO_PASSWORD.match(/\S+/)[0];
 const MONGOS = JSON.parse(process.env.MONGOS || 'false');
@@ -31,11 +31,6 @@ const PRIVKEY = process.env.PRIVKEY ||
 
 const billingClient = new BillingClient(BILLING_URL, PRIVKEY);
 const storage = new Storage(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/__storj-billing-development', mongoOptions);
-
-// const generateDebits = require('../lib/queries/generate-debits')(storage, billingClient);
-// const generateReferralCredits = require('../lib/queries/generate-referral-credits')(storage, billingClient);
-
-const sendInvoices = require('../lib/queries/send-invoices')(storage, billingClient);
 
 const connectedPromise = new Promise((resolve, reject) => {
   storage.connection.on('connected', resolve);
