@@ -1,41 +1,41 @@
-const sinon = require('sinon');
-const stubPromise = require('sinon-stub-promise');
-stubPromise(sinon);
-const chai = require('chai');
-const expect = chai.expect;
-const assert = chai.assert;
-const Promise = require('bluebird');
-const EventEmitter = require('events').EventEmitter;
-const PaymentProcessorsRouter = require('../../../lib/server/routes/payment-processors');
-const httpMocks = require('node-mocks-http');
-const errors = require('storj-service-error-types');
-const routerOpts = require('../../_fixtures/router-opts');
-const constants = require('../../../lib/constants');
-const Config = require('../../../lib/config');
-
+// const sinon = require('sinon');
+// const stubPromise = require('sinon-stub-promise');
+// stubPromise(sinon);
+// const chai = require('chai');
+// const expect = chai.expect;
+// const assert = chai.assert;
+// const Promise = require('bluebird');
+// const EventEmitter = require('events').EventEmitter;
+// const PaymentProcessorsRouter = require('../../../lib/server/routes/payment-processors');
+// const httpMocks = require('node-mocks-http');
+// const errors = require('storj-service-error-types');
+// const routerOpts = require('../../_fixtures/router-opts');
+// const constants = require('../../../lib/constants');
+// const Config = require('../../../lib/config');
+//
 describe('PaymentProcessors Router', () => {
-  const PaymentProc = new PaymentProcessorsRouter(routerOpts);
-  let sandbox;
-
-  beforeEach((done) => {
-    sandbox = sinon.sandbox.create();
-    done();
-  });
-
-  afterEach((done) => {
-    sandbox.restore();
-    done();
-  });
-
-  describe('@constructor', () => {
-    it('smoke test', (done) => {
-      expect(PaymentProc.config).to.be.instanceOf(Config);
-      expect(PaymentProc).to.be.instanceOf(PaymentProcessorsRouter);
-      expect(PaymentProc.models).to.be.ok;
-      done();
-    });
-  });
-
+//   const PaymentProc = new PaymentProcessorsRouter(routerOpts);
+//   let sandbox;
+//
+//   beforeEach((done) => {
+//     sandbox = sinon.sandbox.create();
+//     done();
+//   });
+//
+//   afterEach((done) => {
+//     sandbox.restore();
+//     done();
+//   });
+//
+//   describe('@constructor', () => {
+//     it('smoke test', (done) => {
+//       expect(PaymentProc.config).to.be.instanceOf(Config);
+//       expect(PaymentProc).to.be.instanceOf(PaymentProcessorsRouter);
+//       expect(PaymentProc.models).to.be.ok;
+//       done();
+//     });
+//   });
+//
   // describe('#_addPaymentProcessor', () => {
   //   it('should ping addPaymentProcessor', (done) => {
   //     const req = httpMocks.createRequest({
