@@ -207,5 +207,124 @@ describe('#coinpayments IPN router', function() {
 
       coinpayments.handleIPN(request, response);
     });
+
+    it('should create pending credits when status !== 100', function (done) {
+      const mockBody = require('../../_fixtures/coinpayments_req');
+      const request = httpMocks.createRequest({
+        method: 'POST',
+        url: '/coinpayments'
+      });
+
+      request.body = mockBody({
+        currency: 'STORJ',
+        status: '0',
+        amount: '1000'
+      });
+
+      request.user = testUser;
+
+      const response = httpMocks.createResponse({
+        req: request,
+        eventEmitter: EventEmitter
+      });
+
+      const mockPaymentProcessor = new coinpayments.storage.models.PaymentProcessor({
+        name: 'COINPAYMENTS',
+        user: 'dylan@storj.io',
+        default: true,
+        created: Date.now()
+      });
+
+      const mockCredit = new coinpayments.storage.models.Credit({
+        invoiced_amount: 1000,
+        type: 'automatic',
+        user: testUser._id,
+        payment_processor: 'COINPAYMENTS'
+      });
+
+      const _findPaymentProc = sandbox
+        .stub(coinpayments.storage.models.PaymentProcessor, 'findOne')
+        .returnsPromise()
+
+      _findPaymentProc.resolves(mockPaymentProcessor);
+
+      const _findOne = sandbox
+        .stub(coinpayments.storage.models.Credit, 'findOne')
+        .returnsPromise();
+      _findOne.resolves(mockCredit);
+
+      const _save = sandbox
+        .stub(coinpayments.models.Credit.prototype, 'save')
+        .returnsPromise();
+
+      _save.resolves(mockCredit)
+
+      response.on('end', function () {
+        const data = response._getData();
+        expect(mockCredit.user).to.equal(testUser._id);
+        expect(mockCredit.paid).to.equal(false);
+        expect(mockCredit.paid_amount).to.equal(0);
+        done();
+      });
+
+      coinpayments.handleIPN(request, response);
+    });
+
+    it('should return 500 if incorrect currency', function (done) {
+      const mockBody = require('../../_fixtures/coinpayments_req');
+      const request = httpMocks.createRequest({
+        method: 'POST',
+        url: '/coinpayments'
+      });
+
+      request.body = mockBody({
+        currency: 'ETH',
+        status: '100',
+        amount: '1000'
+      });
+
+      const response = httpMocks.createResponse({
+        req: request,
+        eventEmitter: EventEmitter
+      });
+
+      response.on('end', function () {
+        const data = response._getData();
+        expect(data.statusCode).to.equal(501);
+        expect(data.message).to.equal('ethereum payments not supported at this time.');
+        done();
+      });
+
+      coinpayments.handleIPN(request, response);
+    });
+
+    it('should return 500 if incorrect currency', function (done) {
+      const mockBody = require('../../_fixtures/coinpayments_req');
+      const request = httpMocks.createRequest({
+        method: 'POST',
+        url: '/coinpayments'
+      });
+
+      request.body = mockBody({
+        currency: 'BTC',
+        status: '100',
+        amount: '1000'
+      });
+
+      const response = httpMocks.createResponse({
+        req: request,
+        eventEmitter: EventEmitter
+      });
+
+      response.on('end', function () {
+        const data = response._getData();
+        expect(data.statusCode).to.equal(501);
+        expect(data.message).to.equal('bitcoin payments not supported at this time.');
+        done();
+      });
+
+      coinpayments.handleIPN(request, response);
+    });
+
   });
 });
