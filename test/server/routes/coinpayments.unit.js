@@ -61,9 +61,8 @@ describe('#coinpayments IPN router', function() {
     });
 
     it('should return fallback price if api is down', function (done) {
-      const resolved = new Promise((r) => r({ data: undefined }));
+      const resolved = new Promise((r) => r(undefined));
       sandbox.stub(axios, 'get').returns(resolved);
-
       coinpayments._currentPrice()
         .then((price) => {
           expect(price).to.be.ok;
@@ -325,6 +324,39 @@ describe('#coinpayments IPN router', function() {
 
       coinpayments.handleIPN(request, response);
     });
+
+		it('should error when no payment processor is found', function (done) {
+			const mockBody = require('../../_fixtures/coinpayments_req');
+			const request = httpMocks.createRequest({
+				method: 'POST',
+				url: '/coinpayments'
+			});
+
+			request.body = mockBody({
+				currency: 'STORJ',
+				status: '100'
+			});
+
+			const response = httpMocks.createResponse({
+				req: request,
+				eventEmitter: EventEmitter
+			});
+
+			const _findPaymentProc = sandbox
+        .stub(coinpayments.storage.models.PaymentProcessor, 'findOne')
+        .returnsPromise()
+
+      _findPaymentProc.resolves(undefined);
+
+			response.on('end', function () {
+				expect(response._getData()).to.be.instanceOf(Error);
+				expect(response._getData().statusCode).to.equal(400);
+				expect(response._getData().message).to.equal('no user found');
+				done();
+			});
+
+			coinpayments.handleIPN(request, response);
+		});
 
   });
 });
