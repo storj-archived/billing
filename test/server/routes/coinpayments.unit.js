@@ -141,6 +141,7 @@ describe('#coinpayments IPN router', function() {
         const data = response._getData();
         expect(mockCredit.user).to.equal(testUser._id);
         expect(mockCredit.paid).to.equal(true);
+        expect(mockCredit).to.be.instanceOf(coinpayments.storage.models.Credit);
         done();
       });
 
