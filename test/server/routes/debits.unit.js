@@ -355,6 +355,45 @@ describe('#debitsRouter', function() {
       expect(date.startMoment).to.be.instanceOf(moment);
       expect(date.endMoment).to.be.instanceOf(moment);
       done();
-    })
+    });
+
+    it('should retrun debits for given billing period', (done) => {
+     const req = httpMocks.createRequest({
+        method: 'GET',
+        url: '/debits',
+        user: {
+          id: 'lott.dylan@gmail.com'
+        },
+        params: {
+          startDate: moment(),
+          endDate: moment().add(30, 'days')
+        }
+      });
+
+      const res = httpMocks.createResponse({
+        eventEmitter: EventEmitter,
+        req: req
+      });
+
+      const debits = new debitsRouter.storage.models.Debit({
+        amount: 1000,
+        type: 'STORAGE',
+        user: 'dylan@storj.io'
+      });
+
+      sandbox.stub(debitsRouter.models.Debit, 'find')
+        .callsArgWith(1, null, null)
+
+      res.on('end', function () {
+        console.log('data; ', res._getData());
+        done();
+      });
+
+      debitsRouter.getDebits(req, res);
+    });
+
+    it('should return all debits if no billing period given', (done) => {
+      done();
+    });
   });
 });
