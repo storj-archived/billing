@@ -365,24 +365,17 @@ describe('#debitsRouter', function() {
           id: 'lott.dylan@gmail.com'
         },
         params: {
-          startDate: moment(),
-          endDate: moment().add(30, 'days')
+          startDate: moment().format(),
+          endDate: moment().add(30, 'days').format()
         }
       });
+
+      console.log('retrieving debits for ', req.params)
 
       const res = httpMocks.createResponse({
         eventEmitter: EventEmitter,
         req: req
       });
-
-      const debits = new debitsRouter.storage.models.Debit({
-        amount: 1000,
-        type: 'STORAGE',
-        user: 'dylan@storj.io'
-      });
-
-      sandbox.stub(debitsRouter.models.Debit, 'find')
-        .callsArgWith(1, null, null)
 
       res.on('end', function () {
         console.log('data; ', res._getData());
