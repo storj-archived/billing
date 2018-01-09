@@ -41,6 +41,17 @@ describe('#debitsRouter', function() {
       expect(debitsRouter.config).to.be.instanceOf(Config);
       done();
     });
+
+    it('should return a _definitions array', function (done) {
+      const defs = debitsRouter._definitions()
+      console.log(defs);
+      expect(defs).to.be.a('Array');
+      expect(defs[0][0]).to.equal('POST')
+      expect(defs[0][1]).to.equal('/debits')
+      expect(defs[1][0]).to.equal('GET')
+      expect(defs[1][1]).to.equal('/debits')
+      done();
+    });
   });
 
   describe('_create', function() {
