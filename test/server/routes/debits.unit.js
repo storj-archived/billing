@@ -286,7 +286,9 @@ describe('#debitsRouter', function() {
       // expect(_sync.callCount).to.equal(1);
       done();
     });
+  });
 
+  describe('create debits', () => {
     it('should return 201 with new debit if no paymentProc', (done) => {
       var mockDebit = new debitsRouter.storage.models.Debit({
         amount: 666,
@@ -357,8 +359,18 @@ describe('#debitsRouter', function() {
       done();
     });
 
+  });
+
+  describe('GET /debits', () => {
     it('should retrun debits for given billing period', (done) => {
-     const req = httpMocks.createRequest({
+      const mockDebit = new debitsRouter.storage.models.Debit({
+        amount: 666,
+        user: 'lott.dylan@gmail.com',
+        type: 'bandwidth',
+        created: new Date()
+      });
+
+      const req = httpMocks.createRequest({
         method: 'GET',
         url: '/debits',
         user: {
@@ -370,15 +382,24 @@ describe('#debitsRouter', function() {
         }
       });
 
-      console.log('retrieving debits for ', req.params)
-
       const res = httpMocks.createResponse({
         eventEmitter: EventEmitter,
         req: req
       });
 
+      const _debits = sandbox.stub(debitsRouter.models.Debit, 'find')
+        .returnsPromise()
+
+      _debits.resolves([mockDebit])
+
       res.on('end', function () {
-        console.log('data; ', res._getData());
+        const data = res._getData();
+        expect(data).to.be.ok;
+        expect(data.length).to.equal(1);
+        const debit = data[0];
+        expect(debit.amount).to.equal(666);
+        expect(debit.type).to.equal('bandwidth');
+        expect(debit.user).to.equal('lott.dylan@gmail.com');
         done();
       });
 
@@ -386,7 +407,53 @@ describe('#debitsRouter', function() {
     });
 
     it('should return all debits if no billing period given', (done) => {
-      done();
+      const debit = debitsRouter.models.Debit;
+      const debitsArray = [
+        new debit({
+          amount: '1234',
+          user: 'lott.dylan@gmail.com',
+          type: 'bandwidth'
+        }),
+        new debit({
+          amount: '4567',
+          user: 'lott.dylan@gmail.com',
+          type: 'storage'
+        }),
+        new debit({
+          amount: '8900',
+          user: 'lott.dylan@gmail.com',
+          type: 'bandwidth'
+        })
+      ];
+
+      const req = httpMocks.createRequest({
+        method: 'GET',
+        url: '/debits',
+        user: {
+          id: 'lott.dylan@gmail.com'
+        }
+      });
+
+      const res = httpMocks.createResponse({
+        eventEmitter: EventEmitter,
+        req: req
+      });
+
+      const _allDebits = sandbox.stub(debitsRouter.models.Debit, 'find')
+        .returnsPromise()
+
+      _allDebits.resolves(debitsArray);
+
+      res.on('end', () => {
+        const data = res._getData();
+        console.log('data', data)
+        expect(data.length).to.equal(3);
+        expect(data).to.be.a('Array');
+        expect(data[0]).to.be.a('Object');
+        done();
+      });
+
+      debitsRouter.getDebits(req, res);
     });
   });
 });
