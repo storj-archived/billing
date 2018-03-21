@@ -64,7 +64,6 @@ const BILLING_URL = process.env.BILLING_URL || 'http://localhost:3000';
 const PRIVKEY = process.env.PRIVKEY ||
   'd6b0e5ac88be1f9c3749548de7b6148f14c2ca8ccdf5295369476567e8c8d218';
 
-
 function start() {
   const billingClient = new BillingClient(BILLING_URL, PRIVKEY);
   const storage = new Storage(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/bridge', mongoOptions);
