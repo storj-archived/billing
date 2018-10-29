@@ -1,6 +1,9 @@
+# Billing
 [![Coverage Status](https://coveralls.io/repos/github/Storj/billing/badge.svg?branch=master)](https://coveralls.io/github/Storj/billing?branch=master)
 
-## Billing Setup
+**Notice: Development on android-libstorj is currently on pause during our v3 rearchitecture. Please see storj/storj for ongoing v3 development.**
+
+## Setup
 
 ### 1. Fork and clone `Storj/billing`
 
