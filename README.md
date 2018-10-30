@@ -1,7 +1,7 @@
+**Notice: Development on billing is currently on pause during our v3 rearchitecture. Please see [storj/storj](https://github.com/storj/storj) for ongoing v3 development.**
+
 # Billing
 [![Coverage Status](https://coveralls.io/repos/github/Storj/billing/badge.svg?branch=master)](https://coveralls.io/github/Storj/billing?branch=master)
-
-**Notice: Development on android-libstorj is currently on pause during our v3 rearchitecture. Please see storj/storj for ongoing v3 development.**
 
 ## Setup
 
